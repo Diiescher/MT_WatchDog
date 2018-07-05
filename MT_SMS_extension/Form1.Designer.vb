@@ -32,6 +32,10 @@ Partial Class Form1
         Me.Label3 = New System.Windows.Forms.Label()
         Me.lblCurNr = New System.Windows.Forms.Label()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.lblComPortNr = New System.Windows.Forms.Label()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.lblMailBox = New System.Windows.Forms.Label()
+        Me.Label6 = New System.Windows.Forms.Label()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
         Me.lblInterval = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
@@ -40,19 +44,24 @@ Partial Class Form1
         Me.lblCurTime = New System.Windows.Forms.Label()
         Me.Label4 = New System.Windows.Forms.Label()
         Me.Button1 = New System.Windows.Forms.Button()
-        Me.Label6 = New System.Windows.Forms.Label()
-        Me.lblMailBox = New System.Windows.Forms.Label()
-        Me.tbOMailBox = New System.Windows.Forms.TextBox()
         Me.Label8 = New System.Windows.Forms.Label()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.tbComPortNr = New System.Windows.Forms.TextBox()
+        Me.cbbOMailBox = New System.Windows.Forms.ComboBox()
+        Me.btClearLog = New System.Windows.Forms.Button()
+        Me.cbAtCC = New System.Windows.Forms.CheckBox()
+        Me.cbSlashInbox = New System.Windows.Forms.CheckBox()
+        Me.cbCopyTo = New System.Windows.Forms.CheckBox()
+        Me.cbbCopyMailsTo = New System.Windows.Forms.ComboBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
         '
         'rtbOutput
         '
-        Me.rtbOutput.Location = New System.Drawing.Point(31, 392)
+        Me.rtbOutput.Location = New System.Drawing.Point(33, 490)
         Me.rtbOutput.Name = "rtbOutput"
-        Me.rtbOutput.Size = New System.Drawing.Size(361, 199)
+        Me.rtbOutput.Size = New System.Drawing.Size(361, 169)
         Me.rtbOutput.TabIndex = 0
         Me.rtbOutput.Text = ""
         '
@@ -66,7 +75,7 @@ Partial Class Form1
         '
         'rtbSmsText
         '
-        Me.rtbSmsText.Location = New System.Drawing.Point(9, 199)
+        Me.rtbSmsText.Location = New System.Drawing.Point(14, 226)
         Me.rtbSmsText.Name = "rtbSmsText"
         Me.rtbSmsText.Size = New System.Drawing.Size(333, 39)
         Me.rtbSmsText.TabIndex = 2
@@ -74,7 +83,7 @@ Partial Class Form1
         '
         'btSend
         '
-        Me.btSend.Location = New System.Drawing.Point(410, 337)
+        Me.btSend.Location = New System.Drawing.Point(426, 416)
         Me.btSend.Name = "btSend"
         Me.btSend.Size = New System.Drawing.Size(88, 25)
         Me.btSend.TabIndex = 3
@@ -93,7 +102,7 @@ Partial Class Form1
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(30, 376)
+        Me.Label2.Location = New System.Drawing.Point(30, 465)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(25, 13)
         Me.Label2.TabIndex = 6
@@ -101,11 +110,11 @@ Partial Class Form1
         '
         'btChngNr
         '
-        Me.btChngNr.Location = New System.Drawing.Point(327, 48)
+        Me.btChngNr.Location = New System.Drawing.Point(405, 22)
         Me.btChngNr.Name = "btChngNr"
-        Me.btChngNr.Size = New System.Drawing.Size(88, 25)
+        Me.btChngNr.Size = New System.Drawing.Size(119, 31)
         Me.btChngNr.TabIndex = 7
-        Me.btChngNr.Text = "Override Settings"
+        Me.btChngNr.Text = "manual Override"
         Me.btChngNr.UseVisualStyleBackColor = True
         '
         'Label3
@@ -128,6 +137,8 @@ Partial Class Form1
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.lblComPortNr)
+        Me.GroupBox1.Controls.Add(Me.Label10)
         Me.GroupBox1.Controls.Add(Me.lblMailBox)
         Me.GroupBox1.Controls.Add(Me.Label6)
         Me.GroupBox1.Controls.Add(Me.GroupBox2)
@@ -136,12 +147,48 @@ Partial Class Form1
         Me.GroupBox1.Controls.Add(Me.lblCurNr)
         Me.GroupBox1.Controls.Add(Me.Label3)
         Me.GroupBox1.Controls.Add(Me.rtbSmsText)
-        Me.GroupBox1.Location = New System.Drawing.Point(24, 118)
+        Me.GroupBox1.Location = New System.Drawing.Point(33, 176)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(368, 244)
+        Me.GroupBox1.Size = New System.Drawing.Size(368, 271)
         Me.GroupBox1.TabIndex = 10
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "actually using:"
+        '
+        'lblComPortNr
+        '
+        Me.lblComPortNr.AutoSize = True
+        Me.lblComPortNr.Location = New System.Drawing.Point(257, 28)
+        Me.lblComPortNr.Name = "lblComPortNr"
+        Me.lblComPortNr.Size = New System.Drawing.Size(45, 13)
+        Me.lblComPortNr.TabIndex = 18
+        Me.lblComPortNr.Text = "Label11"
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Location = New System.Drawing.Point(220, 28)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(31, 13)
+        Me.Label10.TabIndex = 17
+        Me.Label10.Text = "Com:"
+        '
+        'lblMailBox
+        '
+        Me.lblMailBox.AutoSize = True
+        Me.lblMailBox.Location = New System.Drawing.Point(11, 88)
+        Me.lblMailBox.Name = "lblMailBox"
+        Me.lblMailBox.Size = New System.Drawing.Size(54, 13)
+        Me.lblMailBox.TabIndex = 16
+        Me.lblMailBox.Text = "lblMailBox"
+        '
+        'Label6
+        '
+        Me.Label6.AutoSize = True
+        Me.Label6.Location = New System.Drawing.Point(11, 71)
+        Me.Label6.Name = "Label6"
+        Me.Label6.Size = New System.Drawing.Size(93, 13)
+        Me.Label6.TabIndex = 15
+        Me.Label6.Text = "Watched Mailbox:"
         '
         'GroupBox2
         '
@@ -149,7 +196,7 @@ Partial Class Form1
         Me.GroupBox2.Controls.Add(Me.Label7)
         Me.GroupBox2.Controls.Add(Me.lblLastHb)
         Me.GroupBox2.Controls.Add(Me.Label5)
-        Me.GroupBox2.Location = New System.Drawing.Point(11, 128)
+        Me.GroupBox2.Location = New System.Drawing.Point(14, 140)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(187, 65)
         Me.GroupBox2.TabIndex = 14
@@ -213,37 +260,12 @@ Partial Class Form1
         'Button1
         '
         Me.Button1.Enabled = False
-        Me.Button1.Location = New System.Drawing.Point(410, 127)
+        Me.Button1.Location = New System.Drawing.Point(426, 185)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(88, 29)
         Me.Button1.TabIndex = 11
-        Me.Button1.Text = "pull mobile Nr"
+        Me.Button1.Text = "pull Data"
         Me.Button1.UseVisualStyleBackColor = True
-        '
-        'Label6
-        '
-        Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(11, 77)
-        Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(46, 13)
-        Me.Label6.TabIndex = 15
-        Me.Label6.Text = "Mailbox:"
-        '
-        'lblMailBox
-        '
-        Me.lblMailBox.AutoSize = True
-        Me.lblMailBox.Location = New System.Drawing.Point(11, 94)
-        Me.lblMailBox.Name = "lblMailBox"
-        Me.lblMailBox.Size = New System.Drawing.Size(54, 13)
-        Me.lblMailBox.TabIndex = 16
-        Me.lblMailBox.Text = "lblMailBox"
-        '
-        'tbOMailBox
-        '
-        Me.tbOMailBox.Location = New System.Drawing.Point(28, 76)
-        Me.tbOMailBox.Name = "tbOMailBox"
-        Me.tbOMailBox.Size = New System.Drawing.Size(274, 20)
-        Me.tbOMailBox.TabIndex = 12
         '
         'Label8
         '
@@ -254,13 +276,95 @@ Partial Class Form1
         Me.Label8.TabIndex = 13
         Me.Label8.Text = "Mailbox"
         '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(330, 17)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(53, 13)
+        Me.Label9.TabIndex = 14
+        Me.Label9.Text = "COM-Port"
+        '
+        'tbComPortNr
+        '
+        Me.tbComPortNr.Location = New System.Drawing.Point(333, 33)
+        Me.tbComPortNr.MaxLength = 2
+        Me.tbComPortNr.Name = "tbComPortNr"
+        Me.tbComPortNr.Size = New System.Drawing.Size(48, 20)
+        Me.tbComPortNr.TabIndex = 15
+        Me.tbComPortNr.Text = "4"
+        '
+        'cbbOMailBox
+        '
+        Me.cbbOMailBox.FormattingEnabled = True
+        Me.cbbOMailBox.Location = New System.Drawing.Point(32, 80)
+        Me.cbbOMailBox.Name = "cbbOMailBox"
+        Me.cbbOMailBox.Size = New System.Drawing.Size(274, 21)
+        Me.cbbOMailBox.TabIndex = 16
+        '
+        'btClearLog
+        '
+        Me.btClearLog.Location = New System.Drawing.Point(436, 628)
+        Me.btClearLog.Name = "btClearLog"
+        Me.btClearLog.Size = New System.Drawing.Size(63, 30)
+        Me.btClearLog.TabIndex = 17
+        Me.btClearLog.Text = "ClearLog"
+        Me.btClearLog.UseVisualStyleBackColor = True
+        '
+        'cbAtCC
+        '
+        Me.cbAtCC.AutoSize = True
+        Me.cbAtCC.Location = New System.Drawing.Point(321, 82)
+        Me.cbAtCC.Name = "cbAtCC"
+        Me.cbAtCC.Size = New System.Drawing.Size(88, 17)
+        Me.cbAtCC.TabIndex = 18
+        Me.cbAtCC.Text = "@Computa..."
+        Me.cbAtCC.UseVisualStyleBackColor = True
+        '
+        'cbSlashInbox
+        '
+        Me.cbSlashInbox.AutoSize = True
+        Me.cbSlashInbox.Location = New System.Drawing.Point(426, 81)
+        Me.cbSlashInbox.Name = "cbSlashInbox"
+        Me.cbSlashInbox.Size = New System.Drawing.Size(57, 17)
+        Me.cbSlashInbox.TabIndex = 19
+        Me.cbSlashInbox.Text = "\Inbox"
+        Me.cbSlashInbox.UseVisualStyleBackColor = True
+        '
+        'cbCopyTo
+        '
+        Me.cbCopyTo.AutoSize = True
+        Me.cbCopyTo.Checked = True
+        Me.cbCopyTo.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.cbCopyTo.Location = New System.Drawing.Point(26, 116)
+        Me.cbCopyTo.Name = "cbCopyTo"
+        Me.cbCopyTo.Size = New System.Drawing.Size(89, 17)
+        Me.cbCopyTo.TabIndex = 20
+        Me.cbCopyTo.Text = "Copy Mails to"
+        Me.cbCopyTo.UseVisualStyleBackColor = True
+        '
+        'cbbCopyMailsTo
+        '
+        Me.cbbCopyMailsTo.FormattingEnabled = True
+        Me.cbbCopyMailsTo.Location = New System.Drawing.Point(139, 115)
+        Me.cbbCopyMailsTo.Name = "cbbCopyMailsTo"
+        Me.cbbCopyMailsTo.Size = New System.Drawing.Size(240, 21)
+        Me.cbbCopyMailsTo.TabIndex = 21
+        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(552, 603)
+        Me.ClientSize = New System.Drawing.Size(552, 671)
+        Me.Controls.Add(Me.cbbCopyMailsTo)
+        Me.Controls.Add(Me.cbCopyTo)
+        Me.Controls.Add(Me.cbSlashInbox)
+        Me.Controls.Add(Me.cbAtCC)
+        Me.Controls.Add(Me.btClearLog)
+        Me.Controls.Add(Me.cbbOMailBox)
+        Me.Controls.Add(Me.tbComPortNr)
+        Me.Controls.Add(Me.Label9)
         Me.Controls.Add(Me.Label8)
-        Me.Controls.Add(Me.tbOMailBox)
         Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.GroupBox1)
         Me.Controls.Add(Me.btChngNr)
@@ -300,6 +404,15 @@ Partial Class Form1
     Friend WithEvents Button1 As Button
     Friend WithEvents lblMailBox As Label
     Friend WithEvents Label6 As Label
-    Friend WithEvents tbOMailBox As TextBox
     Friend WithEvents Label8 As Label
+    Friend WithEvents lblComPortNr As Label
+    Friend WithEvents Label10 As Label
+    Friend WithEvents Label9 As Label
+    Friend WithEvents tbComPortNr As TextBox
+    Friend WithEvents cbbOMailBox As ComboBox
+    Friend WithEvents btClearLog As Button
+    Friend WithEvents cbAtCC As CheckBox
+    Friend WithEvents cbSlashInbox As CheckBox
+    Friend WithEvents cbCopyTo As CheckBox
+    Friend WithEvents cbbCopyMailsTo As ComboBox
 End Class

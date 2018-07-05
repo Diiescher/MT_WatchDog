@@ -19,20 +19,24 @@ Public Class Form1
     Private WithEvents oMaintFolder As Outlook.Folder
     Private WithEvents objNewMailItemsWatch As Outlook.Items
 
-    Private strPort As String = String.Empty
+
     Private WithEvents sp As SerialPort
     Private strBuffer As String = String.Empty
     Private Delegate Sub UpdateBufferDelegate(ByVal Text As String)
 
-    Dim MA As clsBerMA
+    Dim MA As New clsBerMA
     Dim WithEvents timer1 As New Timer
     Dim bSent As Boolean
     Dim failCount As Integer = 0
+    Dim maxCountMsgGiven As Boolean = False
 
     Dim maxFailCount As Integer = 10
     Dim interval As Integer = 10
     Dim strLogText As String
+    Dim strPort As String
 
+
+    Dim strCopyFolder = "PureCopy"
     Dim strMailBox As String = "MB.Maintenance_Networking@computacenter.com\Inbox"
 
     Public Sub New()
@@ -45,11 +49,22 @@ Public Class Form1
         objNewMailItemsWatch = getMailbox(strMailBox)
         'lblMailBox.Text = objNewMailItemsWatch.Parent.folderpath
 
+
+        cbbOMailBox.Items.Add("MB.Maintenance_Networking")
+        cbbOMailBox.Items.Add("MB.DE_Mainserv_PureStorage_AP")
+        cbbOMailBox.SelectedIndex = 0
+
+        cbbCopyMailsTo.Items.Add("Oliver.Schreckenbach@computacenter.com")
+        cbbCopyMailsTo.Items.Add("Florian.Graefen@computacenter.com")
+        cbbCopyMailsTo.SelectedIndex = 0
+
+
         MA = New clsBerMA
         timer1.Interval = 1000
         timer1.Start()
+        'cbbOMailBox.Text = strMailBox
+        strPort = "COM4"
         setlabels()
-        tbOMailBox.Text = strMailBox
     End Sub
 
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -156,10 +171,16 @@ GetFolderPath_Error:
     Private Sub btChngNr_Click(sender As Object, e As EventArgs) Handles btChngNr.Click
         lblCurNr.Text = tbMobNr.Text
         MA.number = tbMobNr.Text
-        strMailBox = tbOMailBox.Text
+        strMailBox = cbbOMailBox.Text
+        If cbAtCC.Checked Then strMailBox &= "@Computacenter.com"
+        If cbSlashInbox.Checked Then strMailBox &= "\Inbox"
 
         objNewMailItemsWatch = getMailbox(strMailBox)
+
         If Not objNewMailItemsWatch Is Nothing Then lblMailBox.Text = objNewMailItemsWatch.Parent.folderpath
+        If tbComPortNr.Text <> "" Then
+            strPort = "COM" & tbComPortNr.Text
+        End If
         setlabels()
     End Sub
 
@@ -187,7 +208,8 @@ GetFolderPath_Error:
                 failCount = 0
             End If
         End If
-        If failCount > maxFailCount - 1 Then
+        If failCount > maxFailCount - 1 And Not maxCountMsgGiven Then
+            maxCountMsgGiven = True
             AddLogText(maxFailCount & " SMS-tries failed. Not trying again")
         End If
     End Sub
@@ -198,17 +220,23 @@ GetFolderPath_Error:
         'Return True
         'Exit Function
 
-        strPort = "COM5"
-        sp = My.Computer.Ports.OpenSerialPort(strPort)
-        result = SendData("ATZ" & vbCr, "OK")
-        result = result And SendData("AT+CMGF=1" & vbCr, "OK")
-        result = result And SendData("AT+CSCA=""+491722270000"",129" & vbCr, "OK")
-        result = result And SendData("AT+CSMP=17,167,0,0" & vbCr, "OK")
-        result = result And SendData("AT+CMGS=""" & [To] & """" & vbCr, ">")
-        result = result And SendData(Message & vbCr, ">")
-        result = result And SendData(Chr(26), "OK")
+        Try
+            sp = My.Computer.Ports.OpenSerialPort(strPort)
+            result = SendData("ATZ" & vbCr, "OK")
+            result = result And SendData("AT+CMGF=1" & vbCr, "OK")
+            result = result And SendData("AT+CSCA=""+491722270000"",129" & vbCr, "OK")
+            result = result And SendData("AT+CSMP=17,167,0,0" & vbCr, "OK")
+            result = result And SendData("AT+CMGS=""" & [To] & """" & vbCr, ">")
+            result = result And SendData(Message & vbCr, ">")
+            result = result And SendData(Chr(26), "OK")
+            sp.Close()
+        Catch EX As System.Exception
+            result = False
+            AddLogText("Send SMS Fail: " & vbCrLf & [To] & " : " & vbCrLf & "Message: " & Message)
+            AddLogText("COM: " & strPort)
+            AddLogText(EX.Message)
+        End Try
 
-        sp.Close()
         Return result
     End Function
     Private Function getMailbox(str As String) As Outlook.Items
@@ -216,14 +244,10 @@ GetFolderPath_Error:
         Try
             result = GetFolderPath(str).Items
         Catch ex As SystemException
-            Debug.Print("not found: MB.Maintenance_Networking" & "\Inbox")
-            Try
-                result = GetFolderPath("MB.Maintenance_Networking" & "\Inbox").Items
-            Catch ex1 As SystemException
-                MsgBox("No Mailbox found!" & vbCrLf & "Tool not working!")
-                MA.number = ""
-                strMailBox = "not found!"
-            End Try
+            Debug.Print("not found: " & str)
+            MsgBox("No Mailbox found!" & vbCrLf & "Tool not working!")
+            MA.number = ""
+            strMailBox = "not found!"
         End Try
         Return result
     End Function
@@ -231,6 +255,7 @@ GetFolderPath_Error:
         lblInterval.Text = interval
         lblCurNr.Text = MA.number
         lblMailBox.Text = strMailBox
+        lblComPortNr.Text = strPort
     End Sub
 
     Private Function WaitForData(ByVal Data As String, Optional ByVal Timeout As Integer = 10) As Boolean
@@ -247,4 +272,13 @@ GetFolderPath_Error:
             End If
         Loop
     End Function
+
+    Private Sub btClearLog_Click(sender As Object, e As EventArgs) Handles btClearLog.Click
+        strLogText = ""
+        rtbOutput.Text = ""
+    End Sub
+
+    Private Sub cbCopyTo_CheckedChanged(sender As Object, e As EventArgs) Handles cbCopyTo.CheckedChanged
+        cbbCopyMailsTo.Enabled = cbCopyTo.Checked
+    End Sub
 End Class
