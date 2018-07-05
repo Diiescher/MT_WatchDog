@@ -5,6 +5,7 @@ Imports Microsoft.Office.Interop.Outlook
 Imports Outlook = Microsoft.Office.Interop.Outlook
 
 Imports System.IO.Ports
+Imports System.Text.RegularExpressions
 
 
 
@@ -30,60 +31,73 @@ Public Class Form1
 
     Dim maxFailCount As Integer = 10
     Dim interval As Integer = 10
+    Dim strLogText As String
+
+    Dim strMailBox As String = "MB.Maintenance_Networking@computacenter.com\Inbox"
 
     Public Sub New()
+
 
         ' This call is required by the designer.
         InitializeComponent()
 
         ' Add any initialization after the InitializeComponent() call.
-        Try
-            objNewMailItemsWatch = GetFolderPath("MB.Maintenance_Networking@computacenter.com" & "\Inbox").Items
-        Catch ex As SystemException
-            Debug.Print("not found: MB.Maintenance_Networking" & "\Inbox")
-            Try
-                objNewMailItemsWatch = GetFolderPath("MB.Maintenance_Networking" & "\Inbox").Items
-            Catch ex1 As SystemException
-                MsgBox("No Mailbox found!" & vbCrLf & "Tool Ends here!")
-                End
-            End Try
-        End Try
+        objNewMailItemsWatch = getMailbox(strMailBox)
+        'lblMailBox.Text = objNewMailItemsWatch.Parent.folderpath
+
         MA = New clsBerMA
         timer1.Interval = 1000
         timer1.Start()
-        lblInterval.Text = interval
+        setlabels()
+        tbOMailBox.Text = strMailBox
     End Sub
 
     Private Sub Form1_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-        Timer1.Start()
+        timer1.Start()
     End Sub
 
     Private Sub objNewMailItemsWatch_ItemAdd(Item As Object) Handles objNewMailItemsWatch.ItemAdd
+        'triggers new Mail event
         Dim mail As Outlook.MailItem
-        Dim out As String
+        Dim out As String = "trigger not found"
+        Dim i As Integer
         Debug.Print("neue Mail eingetroffen")
         If TypeOf Item Is Outlook.MailItem Then
             mail = Item
-            SetText("new mail" & vbCrLf & mail.ConversationTopic)
+            AddLogText("new Mail (Topic)" & vbCrLf & vbTab & Strings.Left(mail.ConversationTopic, 30))
+            i = InStr(UCase(mail.Body), UCase("Dispatch Requirements"))
+            If i > 0 Then
+                out = "PureAlarm:" & Strings.Mid(mail.Body, i, 110)
+                'Regex.Replace(out,"]")
+            End If
+            Dim rgx = New Regex("\[|\]|\(|\)|\|")
+            out = rgx.Replace(out, ".")
+            'send the actual SMS
+            SendTextMessage(MA.number, out)
         End If
     End Sub
 
-    Private Sub SetText(ByVal [text] As String, Optional i As Integer = 0)
+    Private Sub AddLogText(ByVal [text] As String, Optional i As Integer = 0)
+        Dim tStamp As DateTime = TimeOfDay
+        strLogText = strLogText & vbCrLf & tStamp.ToString("HH:mm:ss tt") & ": " & [text]
+        UpdLog(strLogText)
+    End Sub
+
+    Private Sub UpdLog(ByVal [text] As String, Optional i As Integer = 0)
+        Dim tStamp As DateTime = TimeOfDay
+
         ' needed to update textbox from listener
 
         ' InvokeRequired required compares the thread ID of the
         ' calling thread to the thread ID of the creating thread.
-        ' If these threads are different, it returns true.
-
-        If i = 1 Then [text] = rtbOutput.Text & [text]
+        ' If these threads are different, it returns true
         If Me.rtbOutput.InvokeRequired Then
-            Dim d As New SetTextCallback(AddressOf SetText)
+            Dim d As New SetTextCallback(AddressOf UpdLog)
             Me.Invoke(d, New Object() {[text]})
         Else
             rtbOutput.Text = [text]
         End If
     End Sub
-
 
     Function GetFolderPath(ByVal FolderPath As String) As Outlook.Folder
         ' from https://www.slipstick.com/developer/working-vba-nondefault-outlook-folders/
@@ -117,49 +131,11 @@ GetFolderPath_Error:
         Exit Function
     End Function
 
-    Public Function SendTextMessage(ByVal [To] As String, ByVal Message As String) As Boolean
-        Dim result As Boolean
-
-        Debug.Print("sendmessage: " & [To] & vbCrLf & Message)
-        'Return True
-        'Exit Function
-
-        strPort = "COM5"
-        sp = My.Computer.Ports.OpenSerialPort(strPort)
-        result = SendData("ATZ" & vbCr, "OK")
-        result = result And SendData("AT+CMGF=1" & vbCr, "OK")
-        'If SendData("AT+CMGS=" & Chr(34) & [To] & Chr(34) & vbCr, ">") then
-        result = result And SendData("AT+CSCA=""+491722270000"",129" & vbCr, "OK")
-        result = result And SendData("AT+CSMP=17,167,0,0" & vbCr, "OK")
-        result = result And SendData("AT+CMGS=""" & [To] & """" & vbCr, ">")
-        result = result And SendData(Message & vbCr, ">")
-
-        result = result And SendData(Chr(26), "OK")
-
-        sp.Close()
-        Return result
-    End Function
     ' Send data and wait for a specific response 
     Private Function SendData(ByVal Data As String, ByVal WaitFor As String) As Boolean
         Debug.Print("Sending:" & Data)
         sp.Write(Data)
         Return WaitForData(WaitFor)
-    End Function
-
-    Private Function WaitForData(ByVal Data As String, Optional ByVal Timeout As Integer = 10) As Boolean
-
-        Dim StartTime As Date = Date.Now
-        Do
-            If InStr(strBuffer, Data) > 0 Then
-                strBuffer = strBuffer.Substring((InStr(strBuffer, Data) - 1) + Data.Length)
-                Debug.Print("OK")
-                Return True
-            End If
-            If Date.Now.Subtract(StartTime).TotalSeconds >= Timeout Then
-                Debug.Print("FAIL")
-                Return False
-            End If
-        Loop
     End Function
 
     Private Sub UpdateBuffer(ByVal Text As String)
@@ -174,16 +150,21 @@ GetFolderPath_Error:
 
     Private Sub btSend_Click(sender As Object, e As EventArgs) Handles btSend.Click
         SendTextMessage(MA.number, rtbSmsText.Text)
+        AddLogText("testSMS" & vbCrLf & vbTab & MA.number & vbCrLf & vbTab & rtbSmsText.Text)
     End Sub
 
     Private Sub btChngNr_Click(sender As Object, e As EventArgs) Handles btChngNr.Click
         lblCurNr.Text = tbMobNr.Text
         MA.number = tbMobNr.Text
+        strMailBox = tbOMailBox.Text
+
+        objNewMailItemsWatch = getMailbox(strMailBox)
+        If Not objNewMailItemsWatch Is Nothing Then lblMailBox.Text = objNewMailItemsWatch.Parent.folderpath
+        setlabels()
     End Sub
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles timer1.Tick
         Dim i As Integer
-
 
         'clock
         Dim tStamp As DateTime = TimeOfDay
@@ -191,23 +172,79 @@ GetFolderPath_Error:
         If MA.number = "" Then Exit Sub
         'Heartbeat every xx Minutes
 
-
         i = CType(tStamp.Minute, Integer)
         If i Mod interval <> 0 Then bSent = False
         If i Mod interval = 0 And Not bSent And failCount < maxFailCount Then
             bSent = SendTextMessage(MA.number, "Heartbeat : " & tStamp.ToString("HH:mm:ss"))
             If Not bSent Then
                 failCount += 1
-                SetText(i & ": SMS failed " & failCount & " of " & maxFailCount & " times" & vbCrLf, 1)
+                AddLogText("HB-SMS failed " & failCount & " of " & maxFailCount & " times")
             Else
+                'update lastHB-Label
                 lblLastHb.Text = tStamp.ToString("HH:mm:ss tt")
-                SetText(tStamp.ToString("HH:mm:ss") & " : HB-SMS sent (" & failCount + 1 & ". try)" & vbCrLf, 1)
+                'set log-Box
+                AddLogText("HB-SMS sent (" & failCount + 1 & ". try)")
                 failCount = 0
             End If
         End If
         If failCount > maxFailCount - 1 Then
-            SetText(maxFailCount & " tries failed. Not trying again")
+            AddLogText(maxFailCount & " SMS-tries failed. Not trying again")
         End If
     End Sub
+    Public Function SendTextMessage(ByVal [To] As String, ByVal Message As String) As Boolean
+        Dim result As Boolean
 
+        Debug.Print("trying to send SMS: " & [To] & " to " & vbCrLf & Message)
+        'Return True
+        'Exit Function
+
+        strPort = "COM5"
+        sp = My.Computer.Ports.OpenSerialPort(strPort)
+        result = SendData("ATZ" & vbCr, "OK")
+        result = result And SendData("AT+CMGF=1" & vbCr, "OK")
+        result = result And SendData("AT+CSCA=""+491722270000"",129" & vbCr, "OK")
+        result = result And SendData("AT+CSMP=17,167,0,0" & vbCr, "OK")
+        result = result And SendData("AT+CMGS=""" & [To] & """" & vbCr, ">")
+        result = result And SendData(Message & vbCr, ">")
+        result = result And SendData(Chr(26), "OK")
+
+        sp.Close()
+        Return result
+    End Function
+    Private Function getMailbox(str As String) As Outlook.Items
+        Dim result As Outlook.Items = Nothing
+        Try
+            result = GetFolderPath(str).Items
+        Catch ex As SystemException
+            Debug.Print("not found: MB.Maintenance_Networking" & "\Inbox")
+            Try
+                result = GetFolderPath("MB.Maintenance_Networking" & "\Inbox").Items
+            Catch ex1 As SystemException
+                MsgBox("No Mailbox found!" & vbCrLf & "Tool not working!")
+                MA.number = ""
+                strMailBox = "not found!"
+            End Try
+        End Try
+        Return result
+    End Function
+    Private Sub setlabels()
+        lblInterval.Text = interval
+        lblCurNr.Text = MA.number
+        lblMailBox.Text = strMailBox
+    End Sub
+
+    Private Function WaitForData(ByVal Data As String, Optional ByVal Timeout As Integer = 10) As Boolean
+        Dim StartTime As Date = Date.Now
+        Do
+            If InStr(strBuffer, Data) > 0 Then
+                strBuffer = strBuffer.Substring((InStr(strBuffer, Data) - 1) + Data.Length)
+                Debug.Print("OK")
+                Return True
+            End If
+            If Date.Now.Subtract(StartTime).TotalSeconds >= Timeout Then
+                Debug.Print("FAIL")
+                Return False
+            End If
+        Loop
+    End Function
 End Class
