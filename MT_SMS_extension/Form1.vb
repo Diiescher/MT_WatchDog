@@ -26,18 +26,18 @@ Public Class Form1
 
     Dim MA As New clsBerMA
     Dim WithEvents timer1 As New Timer
-    Dim bSent As Boolean
+    Dim bHbSent As Boolean
     Dim failCount As Integer = 0
     Dim maxCountMsgGiven As Boolean = False
 
     Dim maxFailCount As Integer = 10
-    Dim interval As Integer = 10
+    Dim interval As Integer = 15
     Dim strLogText As String
-    Dim strPort As String
+    Dim strPort As String = "COM"
 
 
-    Dim strCopyFolder = "PureCopy"
-    Dim strMailBox As String = "MB.Maintenance_Networking@computacenter.com\Inbox"
+    'Dim strCopyFolder = "PureCopy"
+    Dim strMailBox As String = "" 'MB.Maintenance_Networking@computacenter.com\Inbox"
 
     Public Sub New()
 
@@ -46,7 +46,8 @@ Public Class Form1
         InitializeComponent()
 
         ' Add any initialization after the InitializeComponent() call.
-        objNewMailItemsWatch = getMailbox(strMailBox)
+
+        'objNewMailItemsWatch = getMailbox(strMailBox)
         'lblMailBox.Text = objNewMailItemsWatch.Parent.folderpath
 
 
@@ -60,10 +61,12 @@ Public Class Form1
 
 
         MA = New clsBerMA
+        'If cbCopyTo.Checked Then MA.email = String.Format("{0}\{1}", {cbbCopyMailsTo.Text, strCopyFolder})
         timer1.Interval = 1000
         timer1.Start()
         'cbbOMailBox.Text = strMailBox
-        strPort = "COM4"
+
+        lblSendTo.Text = ""
         setlabels()
     End Sub
 
@@ -74,27 +77,50 @@ Public Class Form1
     Private Sub objNewMailItemsWatch_ItemAdd(Item As Object) Handles objNewMailItemsWatch.ItemAdd
         'triggers new Mail event
         Dim mail As Outlook.MailItem
-        Dim out As String = "trigger not found"
+        Dim out As String = ""
         Dim i As Integer
-        Debug.Print("neue Mail eingetroffen")
+
+        'Debug.Print("neue Mail eingetroffen")
         If TypeOf Item Is Outlook.MailItem Then
-            mail = Item
+            mail = Item 'for intellisense
             AddLogText("new Mail (Topic)" & vbCrLf & vbTab & Strings.Left(mail.ConversationTopic, 30))
+
+            'normaleweise liegt das erste vorkommen von "Displatch" bei ca. 200 Zeichen (ohne fwd head)
             i = InStr(UCase(mail.Body), UCase("Dispatch Requirements"))
-            If i > 0 Then
+            If i > 0 AndAlso i < 600 Then
                 out = "PureAlarm:" & Strings.Mid(mail.Body, i, 110)
-                'Regex.Replace(out,"]")
+            Else
+                out = "no trigger: " & Strings.Left(mail.ConversationTopic, 50)
             End If
             Dim rgx = New Regex("\[|\]|\(|\)|\|")
             out = rgx.Replace(out, ".")
+
             'send the actual SMS
-            SendTextMessage(MA.number, out)
+            If cbSendMailSMS.Checked Then
+                SendTextMessage(MA.number, out)
+            Else
+                AddLogText("Newmail detected but SMS disabled")
+            End If
+            If cbCopyTo.Checked Then
+                sendMailCopy(mail)
+                AddLogText("Mailcopy sent")
+            Else
+                AddLogText("Mail not forwarded")
+            End If
+
         End If
     End Sub
-
+    Private Sub sendMailCopy(mail As Outlook.MailItem)
+        Dim newmail As Outlook.MailItem
+        newmail = mail.Forward
+        newmail.Body = "Watchdog AutoForward" & vbCrLf & vbCrLf & newmail.Body
+        newmail.Recipients.Add(MA.email)
+        newmail.Send()
+    End Sub
     Private Sub AddLogText(ByVal [text] As String, Optional i As Integer = 0)
-        Dim tStamp As DateTime = TimeOfDay
-        strLogText = strLogText & vbCrLf & tStamp.ToString("HH:mm:ss tt") & ": " & [text]
+        Dim tStamp As Date = Date.Now
+        'strLogText = strLogText & vbCrLf & tStamp.ToString("HH:mm:ss tt") & ": " & [text]
+        strLogText = String.Format("{0}{1}{2:t}: {3}", {strLogText, vbCrLf, tStamp, [text]})
         UpdLog(strLogText)
     End Sub
 
@@ -137,7 +163,6 @@ Public Class Form1
                 End If
             Next
         End If
-        'Return the oFolder
         Return oFolder
         Exit Function
 
@@ -148,7 +173,7 @@ GetFolderPath_Error:
 
     ' Send data and wait for a specific response 
     Private Function SendData(ByVal Data As String, ByVal WaitFor As String) As Boolean
-        Debug.Print("Sending:" & Data)
+        'Debug.Print("Sending:" & Data)
         sp.Write(Data)
         Return WaitForData(WaitFor)
     End Function
@@ -169,17 +194,31 @@ GetFolderPath_Error:
     End Sub
 
     Private Sub btChngNr_Click(sender As Object, e As EventArgs) Handles btChngNr.Click
-        lblCurNr.Text = tbMobNr.Text
-        MA.number = tbMobNr.Text
+
         strMailBox = cbbOMailBox.Text
+
+        'Forwarder
+        If cbCopyTo.Checked Then MA.email = cbbCopyMailsTo.Text
+        MA.number = tbMobNr.Text
+
+        'mail Extenders
         If cbAtCC.Checked Then strMailBox &= "@Computacenter.com"
         If cbSlashInbox.Checked Then strMailBox &= "\Inbox"
 
+        'get Mailbox to watch
         objNewMailItemsWatch = getMailbox(strMailBox)
 
-        If Not objNewMailItemsWatch Is Nothing Then lblMailBox.Text = objNewMailItemsWatch.Parent.folderpath
+        ' Comport
         If tbComPortNr.Text <> "" Then
             strPort = "COM" & tbComPortNr.Text
+            lblComPortNr.ForeColor = Color.Black
+            Try
+                sp = My.Computer.Ports.OpenSerialPort(strPort)
+                sp.Close()
+            Catch ex As System.Exception
+                strPort &= " n/a !!"
+                lblComPortNr.ForeColor = Color.Red
+            End Try
         End If
         setlabels()
     End Sub
@@ -189,39 +228,74 @@ GetFolderPath_Error:
 
         'clock
         Dim tStamp As DateTime = TimeOfDay
-        lblCurTime.Text = tStamp '.ToString("HH:mm:ss tt")
+        Dim dstamp As DateTime = Date.Now
+
+        'zum testen :)
+        'dstamp = Date.Parse("2.7.2018")
+
+
+        'Uhr
+        lblCurTime.Text = tStamp  '.ToString("HH:mm:ss tt")
+        lblDateInfo.Text = String.Format("{0:D} {1}", {dstamp, IstFeiertag(dstamp)})
         If MA.number = "" Then Exit Sub
         'Heartbeat every xx Minutes
 
         i = CType(tStamp.Minute, Integer)
-        If i Mod interval <> 0 Then bSent = False
-        If i Mod interval = 0 And Not bSent And failCount < maxFailCount Then
-            bSent = SendTextMessage(MA.number, "Heartbeat : " & tStamp.ToString("HH:mm:ss"))
-            If Not bSent Then
-                failCount += 1
-                AddLogText("HB-SMS failed " & failCount & " of " & maxFailCount & " times")
-            Else
-                'update lastHB-Label
-                lblLastHb.Text = tStamp.ToString("HH:mm:ss tt")
-                'set log-Box
-                AddLogText("HB-SMS sent (" & failCount + 1 & ". try)")
-                failCount = 0
+        If i Mod interval <> 0 Then bHbSent = False
+        If watchdog_active() Then
+            If i Mod interval = 0 And Not bHbSent And failCount < maxFailCount Then
+                If cbSendHbSMS.Checked Then
+                    bHbSent = SendTextMessage(MA.number, "Heartbeat : " & tStamp.ToString("HH:mm:ss"))
+                    If Not bHbSent Then
+                        failCount += 1
+                        AddLogText("HB-SMS failed " & failCount & " of " & maxFailCount & " times")
+                    Else
+                        'update lastHB-Label
+                        lblLastHb.Text = tStamp.ToString("HH:mm:ss tt")
+                        'set log-Box
+                        AddLogText("HB-SMS sent (" & failCount + 1 & ". try)")
+                        failCount = 0
+                    End If
+                    If failCount > maxFailCount - 1 And Not maxCountMsgGiven Then
+                        maxCountMsgGiven = True
+                        AddLogText(maxFailCount & " SMS-tries failed. Not trying again")
+                    End If
+                Else
+                    AddLogText("HB-Interval reached but HB-SMS disabled!")
+                    bHbSent = True
+                End If
             End If
         End If
-        If failCount > maxFailCount - 1 And Not maxCountMsgGiven Then
-            maxCountMsgGiven = True
-            AddLogText(maxFailCount & " SMS-tries failed. Not trying again")
-        End If
+        setlabels()
     End Sub
+    Public Function watchdog_active() As Boolean
+        Dim res As Boolean
+        Dim weekend As Boolean
+        Dim tStamp As Date = Date.Now
+
+        With tStamp
+            weekend = (.DayOfWeek = 6) Or (.DayOfWeek = 0) Or IstFeiertag(.Date) <> ""
+            res = Not cbOnlyOOH.Checked
+            res = res OrElse ((cbOnlyOOH.Checked) And .Hour < 6)
+            res = res Or weekend
+            res = res And MA.number <> ""
+        End With
+        Return res
+    End Function
     Public Function SendTextMessage(ByVal [To] As String, ByVal Message As String) As Boolean
         Dim result As Boolean
 
         Debug.Print("trying to send SMS: " & [To] & " to " & vbCrLf & Message)
         'Return True
         'Exit Function
-
         Try
-            sp = My.Computer.Ports.OpenSerialPort(strPort)
+            Try
+                lblComPortNr.ForeColor = Color.Black
+                sp = My.Computer.Ports.OpenSerialPort(strPort)
+            Catch ex As System.Exception
+                strPort &= " n/a !!"
+                lblComPortNr.ForeColor = Color.Red
+            End Try
             result = SendData("ATZ" & vbCr, "OK")
             result = result And SendData("AT+CMGF=1" & vbCr, "OK")
             result = result And SendData("AT+CSCA=""+491722270000"",129" & vbCr, "OK")
@@ -252,10 +326,17 @@ GetFolderPath_Error:
         Return result
     End Function
     Private Sub setlabels()
-        lblInterval.Text = interval
-        lblCurNr.Text = MA.number
+        Dim active As String = ""
         lblMailBox.Text = strMailBox
+        lblInterval.Text = interval
         lblComPortNr.Text = strPort
+        lblCurNr.Text = MA.number
+        lblForward.Text = MA.email
+        If Not watchdog_active() Then
+            active = "in"
+        End If
+        active &= "active"
+        lblWDisactive.Text = String.Format("Watchdog is {0}", active)
     End Sub
 
     Private Function WaitForData(ByVal Data As String, Optional ByVal Timeout As Integer = 10) As Boolean
@@ -280,5 +361,14 @@ GetFolderPath_Error:
 
     Private Sub cbCopyTo_CheckedChanged(sender As Object, e As EventArgs) Handles cbCopyTo.CheckedChanged
         cbbCopyMailsTo.Enabled = cbCopyTo.Checked
+        lblForward.Enabled = cbCopyTo.Checked
+        If cbCopyTo.Checked Then
+            MA.email = cbbCopyMailsTo.Text
+        Else
+            MA.email = ""
+        End If
+        setlabels()
     End Sub
+
+
 End Class
