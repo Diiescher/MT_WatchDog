@@ -4,7 +4,7 @@ Imports System.Runtime.InteropServices
 Imports Microsoft.Office.Interop.Outlook
 Imports Outlook = Microsoft.Office.Interop.Outlook
 
-Imports System.IO.Ports
+
 Imports System.Text.RegularExpressions
 
 
@@ -20,7 +20,7 @@ Public Class Form1
     Private WithEvents objNewMailItemsWatch As Outlook.Items
 
 
-    Private WithEvents sp As SerialPort
+
     Private strBuffer As String = String.Empty
     Private Delegate Sub UpdateBufferDelegate(ByVal Text As String)
 
@@ -31,7 +31,7 @@ Public Class Form1
     Dim maxCountMsgGiven As Boolean = False
 
     Dim maxFailCount As Integer = 10
-    Dim interval As Integer = 15
+    Const interval As Integer = 15
     Dim strLogText As String
     Dim strPort As String = "COM"
 
@@ -53,11 +53,13 @@ Public Class Form1
 
         cbbOMailBox.Items.Add("MB.Maintenance_Networking")
         cbbOMailBox.Items.Add("MB.DE_Mainserv_PureStorage_AP")
-        cbbOMailBox.SelectedIndex = 0
+        cbbOMailBox.SelectedIndex = 1
 
         cbbCopyMailsTo.Items.Add("Oliver.Schreckenbach@computacenter.com")
         cbbCopyMailsTo.Items.Add("Florian.Graefen@computacenter.com")
         cbbCopyMailsTo.SelectedIndex = 0
+
+        tbMobNr.Text = "01728303626"
 
 
         MA = New clsBerMA
@@ -75,7 +77,7 @@ Public Class Form1
     End Sub
 
     Private Sub objNewMailItemsWatch_ItemAdd(Item As Object) Handles objNewMailItemsWatch.ItemAdd
-        'triggers new Mail event
+        'triggers on new Mail event
         Dim mail As Outlook.MailItem
         Dim out As String = ""
         Dim i As Integer
@@ -88,22 +90,26 @@ Public Class Form1
             'normaleweise liegt das erste vorkommen von "Displatch" bei ca. 200 Zeichen (ohne fwd head)
             i = InStr(UCase(mail.Body), UCase("Dispatch Requirements"))
             If i > 0 AndAlso i < 600 Then
-                out = "PureAlarm:" & Strings.Mid(mail.Body, i, 110)
+                out = "PureAlarm: triggered" '& Strings.Mid(mail.Body, i, 110)
             Else
-                out = "no trigger: " & Strings.Left(mail.ConversationTopic, 50)
+                out = "PureAlarm: no trigger " '& Strings.Left(mail.ConversationTopic, 50)
             End If
             Dim rgx = New Regex("\[|\]|\(|\)|\|")
             out = rgx.Replace(out, ".")
 
             'send the actual SMS
             If cbSendMailSMS.Checked Then
-                SendTextMessage(MA.number, out)
+                If SendTextMessage(MA.number, out) Then
+                    AddLogText(String.Format("OK: notfication SMS to {0}", {MA.number}))
+                Else
+                    AddLogText(String.Format("FAIL: notfication SMS to {0}", {MA.number}))
+                End If
             Else
                 AddLogText("Newmail detected but SMS disabled")
             End If
             If cbCopyTo.Checked Then
                 sendMailCopy(mail)
-                AddLogText("Mailcopy sent")
+
             Else
                 AddLogText("Mail not forwarded")
             End If
@@ -114,12 +120,18 @@ Public Class Form1
         Dim newmail As Outlook.MailItem
         newmail = mail.Forward
         newmail.Body = "Watchdog AutoForward" & vbCrLf & vbCrLf & newmail.Body
+        'delete all receipients
+        While newmail.Recipients.Count > 0
+            newmail.Recipients.Remove(1)
+        End While
+        '  add receipient
         newmail.Recipients.Add(MA.email)
+        'newmail.Display()
         newmail.Send()
+        AddLogText(String.Format("Mailcopy sent"))
     End Sub
     Private Sub AddLogText(ByVal [text] As String, Optional i As Integer = 0)
         Dim tStamp As Date = Date.Now
-        'strLogText = strLogText & vbCrLf & tStamp.ToString("HH:mm:ss tt") & ": " & [text]
         strLogText = String.Format("{0}{1}{2:t}: {3}", {strLogText, vbCrLf, tStamp, [text]})
         UpdLog(strLogText)
     End Sub
@@ -172,10 +184,19 @@ GetFolderPath_Error:
     End Function
 
     ' Send data and wait for a specific response 
-    Private Function SendData(ByVal Data As String, ByVal WaitFor As String) As Boolean
+    Private Function ComSendData(ByVal Data As String, ByVal WaitFor As String) As Boolean
+        Dim res As Boolean
         'Debug.Print("Sending:" & Data)
+        rtbComLog.Text &= "Sending: " & Data & vbCrLf
+        rtbComLog.Text &= "Waiting for: " & WaitFor & "......"
         sp.Write(Data)
-        Return WaitForData(WaitFor)
+        res = WaitForData(WaitFor)
+        If res Then
+            rtbComLog.Text &= "OK" & vbCrLf
+        Else
+            rtbComLog.Text &= "FAIL!" & vbCrLf
+        End If
+        Return res
     End Function
 
     Private Sub UpdateBuffer(ByVal Text As String)
@@ -189,8 +210,13 @@ GetFolderPath_Error:
     End Sub
 
     Private Sub btSend_Click(sender As Object, e As EventArgs) Handles btSend.Click
-        SendTextMessage(MA.number, rtbSmsText.Text)
-        AddLogText("testSMS" & vbCrLf & vbTab & MA.number & vbCrLf & vbTab & rtbSmsText.Text)
+        AddLogText(String.Format("Test-SMS an {0}{2}Text:{1}", {MA.number, rtbSmsText.Text, vbCrLf}))
+        If SendTextMessage(MA.number, rtbSmsText.Text) Then
+            AddLogText("SMS Test OK")
+        Else
+            AddLogText("SMS Test Fail")
+        End If
+
     End Sub
 
     Private Sub btChngNr_Click(sender As Object, e As EventArgs) Handles btChngNr.Click
@@ -224,41 +250,44 @@ GetFolderPath_Error:
     End Sub
 
     Private Sub Timer1_Tick(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles timer1.Tick
+        ' Heartbeart-Timer ticked
+
         Dim i As Integer
 
         'clock
         Dim tStamp As DateTime = TimeOfDay
-        Dim dstamp As DateTime = Date.Now
+        Dim dStamp As DateTime = Date.Now
 
         'zum testen :)
         'dstamp = Date.Parse("2.7.2018")
 
-
         'Uhr
         lblCurTime.Text = tStamp  '.ToString("HH:mm:ss tt")
-        lblDateInfo.Text = String.Format("{0:D} {1}", {dstamp, IstFeiertag(dstamp)})
+        lblDateInfo.Text = String.Format("{0:D} {1}", {dStamp, IstFeiertag(dStamp)})
         If MA.number = "" Then Exit Sub
-        'Heartbeat every xx Minutes
 
-        i = CType(tStamp.Minute, Integer)
+        'Heartbeat every xx Minutes
+        i = CType(tStamp.Minute, Integer) '0-59
+        'reset sent-flag after time-window
         If i Mod interval <> 0 Then bHbSent = False
         If watchdog_active() Then
             If i Mod interval = 0 And Not bHbSent And failCount < maxFailCount Then
                 If cbSendHbSMS.Checked Then
-                    bHbSent = SendTextMessage(MA.number, "Heartbeat : " & tStamp.ToString("HH:mm:ss"))
+                    'actual Haertbeat-SMS
+                    bHbSent = SendTextMessage(MA.number, "PureHB : " & tStamp.ToString("HH:mm:ss"))
                     If Not bHbSent Then
                         failCount += 1
                         AddLogText("HB-SMS failed " & failCount & " of " & maxFailCount & " times")
                     Else
                         'update lastHB-Label
                         lblLastHb.Text = tStamp.ToString("HH:mm:ss tt")
-                        'set log-Box
                         AddLogText("HB-SMS sent (" & failCount + 1 & ". try)")
                         failCount = 0
+                        maxCountMsgGiven = False
                     End If
                     If failCount > maxFailCount - 1 And Not maxCountMsgGiven Then
                         maxCountMsgGiven = True
-                        AddLogText(maxFailCount & " SMS-tries failed. Not trying again")
+                        AddLogText(maxFailCount & " SMS-tries failed. Not trying again!!")
                     End If
                 Else
                     AddLogText("HB-Interval reached but HB-SMS disabled!")
@@ -285,7 +314,7 @@ GetFolderPath_Error:
     Public Function SendTextMessage(ByVal [To] As String, ByVal Message As String) As Boolean
         Dim result As Boolean
 
-        Debug.Print("trying to send SMS: " & [To] & " to " & vbCrLf & Message)
+        'Debug.Print("trying to send SMS: " & [To] & " to " & vbCrLf & Message)
         'Return True
         'Exit Function
         Try
@@ -295,22 +324,25 @@ GetFolderPath_Error:
             Catch ex As System.Exception
                 strPort &= " n/a !!"
                 lblComPortNr.ForeColor = Color.Red
+                Return False
             End Try
-            result = SendData("ATZ" & vbCr, "OK")
-            result = result And SendData("AT+CMGF=1" & vbCr, "OK")
-            result = result And SendData("AT+CSCA=""+491722270000"",129" & vbCr, "OK")
-            result = result And SendData("AT+CSMP=17,167,0,0" & vbCr, "OK")
-            result = result And SendData("AT+CMGS=""" & [To] & """" & vbCr, ">")
-            result = result And SendData(Message & vbCr, ">")
-            result = result And SendData(Chr(26), "OK")
+            result = ComSendData("ATZ" & vbCr, "OK")
+            ' set text-mode
+            'result = result And ComSendData("AT+CMGF=1" & vbCr, "OK")
+            ' set SMS Center +491722270000, should be saved on SIM
+            'result = result And ComSendData("AT+CSCA=""+491722270333"",145" & vbCr, "OK")
+            ' set data type
+            'result = result And ComSendData("AT+CSMP=17,167,0,0" & vbCr, "OK")
+            result = result And ComSendData("AT+CMGS=""" & [To] & """" & vbCr, ">")
+            result = result And ComSendData(Message & vbCr, ">")
+            result = result And ComSendData(Chr(26), "OK")
             sp.Close()
         Catch EX As System.Exception
             result = False
-            AddLogText("Send SMS Fail: " & vbCrLf & [To] & " : " & vbCrLf & "Message: " & Message)
+            AddLogText("Send SMS failed with exception: " & vbCrLf & [To] & " : " & vbCrLf & "Message: " & Message)
             AddLogText("COM: " & strPort)
             AddLogText(EX.Message)
         End Try
-
         Return result
     End Function
     Private Function getMailbox(str As String) As Outlook.Items
@@ -344,11 +376,11 @@ GetFolderPath_Error:
         Do
             If InStr(strBuffer, Data) > 0 Then
                 strBuffer = strBuffer.Substring((InStr(strBuffer, Data) - 1) + Data.Length)
-                Debug.Print("OK")
+                'Debug.Print("OK")
                 Return True
             End If
             If Date.Now.Subtract(StartTime).TotalSeconds >= Timeout Then
-                Debug.Print("FAIL")
+                'Debug.Print("FAIL")
                 Return False
             End If
         Loop

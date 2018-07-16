@@ -32,6 +32,8 @@ Partial Class Form1
         Me.Label3 = New System.Windows.Forms.Label()
         Me.lblCurNr = New System.Windows.Forms.Label()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
+        Me.lblWDisactive = New System.Windows.Forms.Label()
+        Me.lblDateInfo = New System.Windows.Forms.Label()
         Me.cbOnlyOOH = New System.Windows.Forms.CheckBox()
         Me.cbSendHbSMS = New System.Windows.Forms.CheckBox()
         Me.lblForward = New System.Windows.Forms.Label()
@@ -59,8 +61,7 @@ Partial Class Form1
         Me.cbCopyTo = New System.Windows.Forms.CheckBox()
         Me.cbbCopyMailsTo = New System.Windows.Forms.ComboBox()
         Me.lblSendTo = New System.Windows.Forms.Label()
-        Me.lblDateInfo = New System.Windows.Forms.Label()
-        Me.lblWDisactive = New System.Windows.Forms.Label()
+        Me.rtbComLog = New System.Windows.Forms.RichTextBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
@@ -79,7 +80,6 @@ Partial Class Form1
         Me.tbMobNr.Name = "tbMobNr"
         Me.tbMobNr.Size = New System.Drawing.Size(278, 20)
         Me.tbMobNr.TabIndex = 1
-        Me.tbMobNr.Text = "+491729278903"
         '
         'rtbSmsText
         '
@@ -167,6 +167,24 @@ Partial Class Form1
         Me.GroupBox1.TabIndex = 10
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "actually using:"
+        '
+        'lblWDisactive
+        '
+        Me.lblWDisactive.AutoSize = True
+        Me.lblWDisactive.Location = New System.Drawing.Point(12, 39)
+        Me.lblWDisactive.Name = "lblWDisactive"
+        Me.lblWDisactive.Size = New System.Drawing.Size(45, 13)
+        Me.lblWDisactive.TabIndex = 27
+        Me.lblWDisactive.Text = "Label12"
+        '
+        'lblDateInfo
+        '
+        Me.lblDateInfo.AutoSize = True
+        Me.lblDateInfo.Location = New System.Drawing.Point(141, 24)
+        Me.lblDateInfo.Name = "lblDateInfo"
+        Me.lblDateInfo.Size = New System.Drawing.Size(45, 13)
+        Me.lblDateInfo.TabIndex = 26
+        Me.lblDateInfo.Text = "Label12"
         '
         'cbOnlyOOH
         '
@@ -418,35 +436,26 @@ Partial Class Form1
         'lblSendTo
         '
         Me.lblSendTo.AutoSize = True
-        Me.lblSendTo.Location = New System.Drawing.Point(940, 144)
+        Me.lblSendTo.Location = New System.Drawing.Point(625, 69)
         Me.lblSendTo.Name = "lblSendTo"
         Me.lblSendTo.Size = New System.Drawing.Size(45, 13)
         Me.lblSendTo.TabIndex = 22
         Me.lblSendTo.Text = "Label11"
         '
-        'lblDateInfo
+        'rtbComLog
         '
-        Me.lblDateInfo.AutoSize = True
-        Me.lblDateInfo.Location = New System.Drawing.Point(141, 24)
-        Me.lblDateInfo.Name = "lblDateInfo"
-        Me.lblDateInfo.Size = New System.Drawing.Size(45, 13)
-        Me.lblDateInfo.TabIndex = 26
-        Me.lblDateInfo.Text = "Label12"
-        '
-        'lblWDisactive
-        '
-        Me.lblWDisactive.AutoSize = True
-        Me.lblWDisactive.Location = New System.Drawing.Point(12, 39)
-        Me.lblWDisactive.Name = "lblWDisactive"
-        Me.lblWDisactive.Size = New System.Drawing.Size(45, 13)
-        Me.lblWDisactive.TabIndex = 27
-        Me.lblWDisactive.Text = "Label12"
+        Me.rtbComLog.Location = New System.Drawing.Point(499, 153)
+        Me.rtbComLog.Name = "rtbComLog"
+        Me.rtbComLog.Size = New System.Drawing.Size(439, 324)
+        Me.rtbComLog.TabIndex = 23
+        Me.rtbComLog.Text = ""
         '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(770, 660)
+        Me.ClientSize = New System.Drawing.Size(974, 660)
+        Me.Controls.Add(Me.rtbComLog)
         Me.Controls.Add(Me.lblSendTo)
         Me.Controls.Add(Me.cbSlashInbox)
         Me.Controls.Add(Me.cbAtCC)
@@ -516,4 +525,5 @@ Partial Class Form1
     Friend WithEvents cbOnlyOOH As CheckBox
     Friend WithEvents lblDateInfo As Label
     Friend WithEvents lblWDisactive As Label
+    Friend WithEvents rtbComLog As RichTextBox
 End Class

@@ -2,6 +2,12 @@
 
 Module assets
 
+
+
+
+
+
+
     'feiertagsberechnung von BV-FUN
 
     Public Function IstFeiertag(Datum As Date) As String
