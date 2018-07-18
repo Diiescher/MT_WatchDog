@@ -60,8 +60,6 @@ Partial Class Form1
         Me.cbSlashInbox = New System.Windows.Forms.CheckBox()
         Me.cbCopyTo = New System.Windows.Forms.CheckBox()
         Me.cbbCopyMailsTo = New System.Windows.Forms.ComboBox()
-        Me.lblSendTo = New System.Windows.Forms.Label()
-        Me.rtbComLog = New System.Windows.Forms.RichTextBox()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
@@ -189,6 +187,8 @@ Partial Class Form1
         'cbOnlyOOH
         '
         Me.cbOnlyOOH.AutoSize = True
+        Me.cbOnlyOOH.Checked = True
+        Me.cbOnlyOOH.CheckState = System.Windows.Forms.CheckState.Checked
         Me.cbOnlyOOH.Location = New System.Drawing.Point(223, 172)
         Me.cbOnlyOOH.Name = "cbOnlyOOH"
         Me.cbOnlyOOH.Size = New System.Drawing.Size(125, 17)
@@ -394,8 +394,6 @@ Partial Class Form1
         'cbAtCC
         '
         Me.cbAtCC.AutoSize = True
-        Me.cbAtCC.Checked = True
-        Me.cbAtCC.CheckState = System.Windows.Forms.CheckState.Checked
         Me.cbAtCC.Location = New System.Drawing.Point(321, 82)
         Me.cbAtCC.Name = "cbAtCC"
         Me.cbAtCC.Size = New System.Drawing.Size(88, 17)
@@ -433,30 +431,11 @@ Partial Class Form1
         Me.cbbCopyMailsTo.Size = New System.Drawing.Size(240, 21)
         Me.cbbCopyMailsTo.TabIndex = 21
         '
-        'lblSendTo
-        '
-        Me.lblSendTo.AutoSize = True
-        Me.lblSendTo.Location = New System.Drawing.Point(625, 69)
-        Me.lblSendTo.Name = "lblSendTo"
-        Me.lblSendTo.Size = New System.Drawing.Size(45, 13)
-        Me.lblSendTo.TabIndex = 22
-        Me.lblSendTo.Text = "Label11"
-        '
-        'rtbComLog
-        '
-        Me.rtbComLog.Location = New System.Drawing.Point(499, 153)
-        Me.rtbComLog.Name = "rtbComLog"
-        Me.rtbComLog.Size = New System.Drawing.Size(439, 324)
-        Me.rtbComLog.TabIndex = 23
-        Me.rtbComLog.Text = ""
-        '
         'Form1
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(974, 660)
-        Me.Controls.Add(Me.rtbComLog)
-        Me.Controls.Add(Me.lblSendTo)
+        Me.ClientSize = New System.Drawing.Size(545, 660)
         Me.Controls.Add(Me.cbSlashInbox)
         Me.Controls.Add(Me.cbAtCC)
         Me.Controls.Add(Me.btClearLog)
@@ -476,7 +455,7 @@ Partial Class Form1
         Me.Controls.Add(Me.tbMobNr)
         Me.Controls.Add(Me.rtbOutput)
         Me.Name = "Form1"
-        Me.Text = "MB_Watchdog"
+        Me.Text = "MB_Watchdog killsw"
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
         Me.GroupBox2.ResumeLayout(False)
@@ -517,7 +496,6 @@ Partial Class Form1
     Friend WithEvents cbSlashInbox As CheckBox
     Friend WithEvents cbCopyTo As CheckBox
     Friend WithEvents cbbCopyMailsTo As ComboBox
-    Friend WithEvents lblSendTo As Label
     Friend WithEvents lblForward As Label
     Friend WithEvents Label11 As Label
     Friend WithEvents cbSendMailSMS As CheckBox
@@ -525,5 +503,4 @@ Partial Class Form1
     Friend WithEvents cbOnlyOOH As CheckBox
     Friend WithEvents lblDateInfo As Label
     Friend WithEvents lblWDisactive As Label
-    Friend WithEvents rtbComLog As RichTextBox
 End Class

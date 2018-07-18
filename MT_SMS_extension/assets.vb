@@ -1,45 +1,73 @@
 ﻿Option Explicit On
+Imports Outlook = Microsoft.Office.Interop.Outlook
 
 Module assets
+    Public WithEvents olApp As Outlook.Application = CreateObject("Outlook.Application")
 
+    Function GetFolderPath(ByVal FolderPath As String) As Outlook.Folder
+        ' from https://www.slipstick.com/developer/working-vba-nondefault-outlook-folders/
+        Dim oFolder As Outlook.Folder
 
+        Dim i As Integer
 
+        On Error GoTo GetFolderPath_Error
+        If Strings.Left(FolderPath, 2) = "\\" Then
+            FolderPath = Strings.Right(FolderPath, Len(FolderPath) - 2)
+        End If
+        'Convert folderpath to array
+        Dim FoldersArray = Split(FolderPath, "\")
+        oFolder = olApp.Session.Folders.Item(FoldersArray(0))
+        If Not oFolder Is Nothing Then
+            For i = 1 To UBound(FoldersArray, 1)
+                Dim SubFolders As Outlook.Folders
+                SubFolders = oFolder.Folders
+                oFolder = SubFolders.Item(FoldersArray(i))
+                If oFolder Is Nothing Then
+                    GetFolderPath = Nothing
+                End If
+            Next
+        End If
+        Return oFolder
+        Exit Function
 
+GetFolderPath_Error:
+        GetFolderPath = Nothing
+        Exit Function
+    End Function
 
-
-
-    'feiertagsberechnung von BV-FUN
+    'feiertagsberechnung nach BV-FUN
 
     Public Function IstFeiertag(Datum As Date) As String
         Dim Osterdatum As DateTime
 
         If Datum.Day = 1 And Datum.Month = 1 Then
-            IstFeiertag = "Neujahr"
+            Return "Neujahr"
         ElseIf Datum.Day = 1 And Datum.Month = 5 Then
-            IstFeiertag = "Maifeiertag"
+            Return "Maifeiertag"
         ElseIf Datum.Day = 3 And Datum.Month = 10 Then
-            IstFeiertag = "Tag der Deutschen Einheit"
+            Return "Tag der Deutschen Einheit"
         ElseIf Datum.Day = 25 And Datum.Month = 12 Then
-            IstFeiertag = "1. Weihnachtstag"
+            Return "1. Weihnachtstag"
         ElseIf Datum.Day = 26 And Datum.Month = 12 Then
-            IstFeiertag = "2. Weihnachtstag"
+            Return "2. Weihnachtstag"
         Else
             Osterdatum = HolOsterdatum(Datum.Year)
 
             If (Osterdatum - Datum).Days = 2 Then
-                IstFeiertag = "Karfreitag"
+                Return "Karfreitag"
             ElseIf Datum = Osterdatum Then
-                IstFeiertag = "Ostersonntag"
+                Return "Ostersonntag"
             ElseIf (Datum - Osterdatum).Days = 1 Then
-                IstFeiertag = "Ostermontag"
+                Return "Ostermontag"
             ElseIf (Datum - Osterdatum).Days = 39 Then
-                IstFeiertag = "Christi Himmelfahrt"
+                Return "Christi Himmelfahrt"
             ElseIf (Datum - Osterdatum).Days = 49 Then
-                IstFeiertag = "Pfingstsonntag"
+                Return "Pfingstsonntag"
             ElseIf (Datum - Osterdatum).Days = 50 Then
-                IstFeiertag = "Pfingstmontag"
+                Return "Pfingstmontag"
             End If
         End If
+        Return String.Empty
     End Function
 
     Private Function HolOsterdatum(Jahr As Integer) As Date
