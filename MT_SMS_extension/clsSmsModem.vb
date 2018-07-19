@@ -59,7 +59,7 @@ Public Class clsSmsModem
             sp.Close()
         Catch EX As System.Exception
             MessageText = "Send SMS Failed with Exception" & vbCrLf & EX.Message
-            Return False
+            result = False
         End Try
         Return result
     End Function

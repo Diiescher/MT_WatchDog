@@ -15,7 +15,28 @@ Public Class clsWdDatabase
 
     Public ReadOnly Property Message
         Get
-            Message = msg
+            Return msg
+        End Get
+    End Property
+
+    Public ReadOnly Property email
+        Get
+            Dim rs As MySqlDataReader
+            Dim sQuery As String = String.Empty
+            sQuery = "SELECT berEmail FROM " & sDBName & ".commondata Limit 1;"
+            rs = dbQuery(sQuery)
+            rs.Read()
+            Return rs.GetString("berEmail")
+        End Get
+    End Property
+    Public ReadOnly Property mobile
+        Get
+            Dim rs As MySqlDataReader
+            Dim sQuery As String = String.Empty
+            sQuery = "SELECT berMobile FROM " & sDBName & ".commondata Limit 1;"
+            rs = dbQuery(sQuery)
+            rs.Read()
+            Return rs.GetString("berMobile")
         End Get
     End Property
 
@@ -97,5 +118,16 @@ Public Class clsWdDatabase
         End Try
         Return res
     End Function
-
+    Public Function currentBereitschaftsMA() As clsBerMA
+        Dim berMA As New clsBerMA
+        Dim rs As MySqlDataReader
+        Dim sQuery As String = String.Empty
+        sQuery = "SELECT * FROM " & sDBName & ".commondata Limit 1;"
+        rs = dbQuery(sQuery)
+        rs.Read()
+        berMA.email = rs.GetString("berEmail")
+        berMA.number = rs.GetString("berMobile")
+        rs.Dispose()
+        Return berMA
+    End Function
 End Class
