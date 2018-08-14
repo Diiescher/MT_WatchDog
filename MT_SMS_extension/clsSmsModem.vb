@@ -68,10 +68,10 @@ Public Class clsSmsModem
         Try
             sp = My.Computer.Ports.OpenSerialPort(Port)
             sp.Close()
-            MessageText = String.Format("Port {0} tested OK", {Port})
+            MessageText = String.Format("Port {0} tested OK", Port)
             Return True
         Catch ex As System.Exception
-            MessageText = String.Format("Port {0} Failed{1}{2}", {Port, vbCrLf, ex.Message})
+            MessageText = String.Format("Port {0} Failed{1}{2}", Port, vbCrLf, ex.Message)
             working = False
             Return False
         End Try

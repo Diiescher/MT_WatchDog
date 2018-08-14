@@ -54,7 +54,7 @@ Public Class clsWdDatabase
             sqlOnlineState = True
             Return newConn
         Catch ex As Exception
-            msg = String.Format("myMySQLConnection failed:{0}{1}", {vbCrLf, ex.Message})
+            msg = String.Format("myMySQLConnection failed:{0}{1}", vbCrLf, ex.Message)
             sqlOnlineState = False
             newConn = Nothing
             Return Nothing
@@ -114,7 +114,7 @@ Public Class clsWdDatabase
             'End If
 
         Catch ex As Exception
-            Debug.Print(String.Format("Exception in KillTheDog:{0}String:{1}{0}EX:{2}", {vbCrLf, sQuery, ex.Message}))
+            Debug.Print(String.Format("Exception in KillTheDog:{0}String:{1}{0}EX:{2}", vbCrLf, sQuery, ex.Message))
         End Try
         Return res
     End Function

@@ -32,7 +32,7 @@ Namespace My
         
         <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Protected Overrides Sub OnCreateMainForm()
-            Me.MainForm = Global.MT_SMS_extension.Form1
+            Me.MainForm = Global.MT_SMS_extension.MT_Watchdog
         End Sub
     End Class
 End Namespace

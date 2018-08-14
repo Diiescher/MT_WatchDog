@@ -9,7 +9,7 @@ Imports System.Text.RegularExpressions
 
 
 
-Public Class Form1
+Public Class MT_Watchdog
     Delegate Sub SetTextCallback([text] As String)
 
     Public WithEvents olApp As Outlook.Application = CreateObject("Outlook.Application")
@@ -19,7 +19,7 @@ Public Class Form1
     Private WithEvents oMaintFolder As Outlook.Folder
     Private WithEvents objNewMailItemsWatch As Outlook.Items
 
-    Const WDVersion As String = "V0.1 Alpha"
+    Const WDVersion As String = "V0.1b Alpha"
 
     Dim MA As New clsBerMA
     Dim MaList As New Collection 'of MA :)
@@ -30,6 +30,7 @@ Public Class Form1
 
     Dim maxFailCount As Integer = 10
     Const HBinterval As Integer = 15
+    Const dbPull As Integer = 20
     Const HBTick As String = "PureHB"
     Const HBStop As String = "PureHB stop"
     Dim strLogText As String
@@ -52,7 +53,7 @@ Public Class Form1
         cbbCopyMailsTo.Items.Add("Oliver.Schreckenbach@computacenter.com")
         cbbCopyMailsTo.Items.Add("Florian.Graefen@computacenter.com")
 
-        tbMobNr.Text = "+491728303626"
+        tbMobNr.Text = ""
 
         MaList = collectUsers()
 
@@ -61,7 +62,8 @@ Public Class Form1
         'cbbOMailBox.Text = strMailBox
 
         'objNewMailItemsWatch = FindInbox(strMailBox)
-        Me.Text = String.Format("MT Watchdog {0} running on account {1}", {WDVersion, Environment.UserName})
+        Me.Text = String.Format("MT Watchdog {0} running on account {1}", WDVersion, Environment.UserName)
+        rbUseDB.Text = String.Format("Use Database Setting | Pulled every {0} seconds", dbPull)
 
         AddLogText("Started")
         setlabels()
@@ -104,9 +106,9 @@ Public Class Form1
             'send the actual SMS
             If cbSendMailSMS.Checked Then
                 If modem.SendSMS(MA.number, out) Then
-                    AddLogText(String.Format("OK: notfication SMS to {0}", {MA.number}))
+                    AddLogText(String.Format("OK: notfication SMS to {0}", MA.number))
                 Else
-                    AddLogText(String.Format("FAIL: notfication SMS to {0}", {MA.number}))
+                    AddLogText(String.Format("FAIL: notfication SMS to {0}", MA.number))
                 End If
             Else
                 AddLogText("Newmail detected but SMS disabled")
@@ -137,18 +139,16 @@ Public Class Form1
     Public Sub AddLogText(ByVal [text] As String, Optional i As Integer = 0)
         Dim maxLogLength As Integer = 50000
         Dim tStamp As Date = Date.Now
-        strLogText = String.Format("{0}{1:t}: {2}{3}", {strLogText, tStamp, [text], vbCrLf})
+        strLogText = String.Format("{0}{1:g} -- {2}{3}", strLogText, tStamp, [text], vbCrLf)
         If strLogText.Length > maxLogLength Then
             'truncate logtxt line by line (search for 2nd vbcrlf and omit all lines before)
-            strLogText = String.Format("[...]{0}{1}", {vbCrLf, Strings.Right(strLogText, maxLogLength)})
+            strLogText = String.Format("[...]{0}{1}", vbCrLf, Strings.Right(strLogText, maxLogLength))
             lblLog.Text = "LOG ... truncated"
         End If
         UpdLog(strLogText)
     End Sub
 
-    Private Sub UpdLog(ByVal [text] As String, Optional i As Integer = 0)
-        Dim tStamp As DateTime = TimeOfDay
-
+    Private Sub UpdLog(ByVal [text] As String)
         ' needed to update textbox from listener
 
         ' InvokeRequired required compares the thread ID of the
@@ -168,7 +168,7 @@ Public Class Form1
 
 
     Private Sub btSend_Click(sender As Object, e As EventArgs) Handles btSend.Click
-        AddLogText(String.Format("Trying Test-SMS an {0}{2}Text:{1}", {MA.number, rtbSmsText.Text, vbCrLf}))
+        AddLogText(String.Format("Trying Test-SMS an {0}{2}Text:{1}", MA.number, rtbSmsText.Text, vbCrLf))
         Try
             If modem.SendSMS(MA.number, rtbSmsText.Text) Then
                 AddLogText("SMS Test OK")
@@ -201,15 +201,16 @@ Public Class Form1
 
         'Uhr
         lblCurTime.Text = tStamp  '.ToString("HH:mm:ss tt")
-        lblDateInfo.Text = String.Format("{0:D} {1}", {dStamp, IstFeiertag(dStamp)})
+        lblDateInfo.Text = String.Format("{0:D} {1}", dStamp, IstFeiertag(dStamp))
+        ' datenbank
+        If rbUseDB.Checked AndAlso (tStamp.Second Mod dbPull) = 0 Then checkDBSettings()
 
-        If (tStamp.Second Mod 20) = 0 Then checkDBSettings()
         If MA.number = "" Then
             lblWDisactive.Text = "no Data, no DOG"
             Exit Sub
         End If
 
-        'Heartbeat every xx Minutes
+        'Heartbeat every "HBinterval" Minutes
         [min] = CType(tStamp.Minute, Integer) '0-59
         If [min] Mod HBinterval <> 0 Then bHbSent = False 'reset HB-sent-flag after time-window, so new HB can occur
         If watchdogOnDuty() Then
@@ -217,16 +218,26 @@ Public Class Form1
                 If cbSendHbSMS.Checked Then
                     Dim HbText As String = HBTick
                     'last message?
-                    If Not watchdogOnDuty(Date.Now.AddMinutes(HBinterval)) Then HbText = HBStop
+                    If Not watchdogOnDuty(Date.Now.AddMinutes(HBinterval)) Then
+                        'notify mobile to stop the alarm-timer
+                        HbText = HBStop
+                    End If
+                    ' mailbox still reachable?
+                    If getMailbox(strMailBox) Is Nothing Then
+                        'time on mobile will not be reset and alarm will go off
+                        HbText = "Fail Alert: Dog lost trail of Mailbox"
+                    End If
                     'actual Haertbeat-SMS
-                    bHbSent = modem.SendSMS(MA.number, String.Format("{0} {1:t}", {HbText, tStamp})) ' " & tStamp.ToString("HH:mm:ss"))
+                    ' adding date info
+                    HbText = String.Format("{0} {1:g}", HbText, dStamp)
+                    bHbSent = modem.SendSMS(MA.number, HbText) ' " & tStamp.ToString("HH:mm:ss"))
                     If Not bHbSent Then
                         failCount += 1
-                        AddLogText("HB-SMS failed " & failCount & " of " & maxFailCount & " times")
+                        AddLogText(String.Format("HB-SMS failed {0} of {1} times", failCount, maxFailCount))
                     Else
                         'update lastHB-Label
                         lblLastHb.Text = tStamp.ToString("HH:mm:ss tt")
-                        AddLogText("HB-SMS sent (" & failCount + 1 & ". try)")
+                        AddLogText(String.Format("HB-SMS ""{1}"" sent ({0}. try)", failCount + 1, HbText))
                         failCount = 0
                         maxCountMsgGiven = False
                     End If
@@ -243,32 +254,39 @@ Public Class Form1
         setlabels()
     End Sub
     Private Sub checkDBSettings()
+        'checks DB data
 
-        If rbUseDB.Checked Then
-            Dim Mnew As New clsBerMA
-            Mnew = dbData.currentBereitschaftsMA
-            If Not Mnew.sameAs(MA) Then
+        Dim boo As Boolean
+
+        Dim Mnew As New clsBerMA
+        Mnew = dbData.currentBereitschaftsMA
+        If Not Mnew.sameAs(MA) Then
+            Try
+                Dim mes As String = String.Format("MA Data Changed{0}New Number: {1}{0}New Mail: {2}", vbCrLf, Mnew.number, Mnew.email)
+                'message new and old number about change
+                boo = modem.SendSMS(Mnew.number, String.Format("{1}", vbCrLf, mes))
+                boo = modem.SendSMS(MA.number, String.Format("{0} {1}", HBStop, mes)) And boo
+
+                If Not boo Then
+                    AddLogText(modem.Message)
+                Else
+                    AddLogText(mes)
+                End If
                 MA = Mnew
-                Try
-                    Dim mes As String = String.Format("MA Data Changed{0}New Number: {1}{0}New Mail: {2}", {vbCrLf, MA.number, MA.email})
-                    If Not modem.SendSMS(MA.number, mes) Then
-                        AddLogText(modem.Message)
-                    Else
-                        AddLogText(mes)
-                    End If
+            Catch ex As SystemException
+                AddLogText(ex.Message)
+                AddLogText("No change to data due to exception")
+            End Try
 
-                Catch ex As SystemException
-                    AddLogText(ex.Message)
-                End Try
-            End If
-            If dbData.KillTheDog Then
-                Try
-                    modem.SendSMS(MA.number, String.Format("Dog of {0} ends now", {Environment.UserName}))
-                Catch ex As systemException
+        End If
+        If dbData.KillTheDog Then
+            Try
+                'say goodby to current mobile number
+                modem.SendSMS(MA.number, String.Format("Dog of {0} ends now", Environment.UserName))
+            Catch ex As SystemException
 
-                End Try
-                End
-            End If
+            End Try
+            End
         End If
     End Sub
 
@@ -303,7 +321,8 @@ Public Class Form1
             Debug.Print("not found: " & str)
             MsgBox("No Mailbox found!" & vbCrLf & "Tool not working!")
             MA.number = ""
-            strMailBox = "not found!"
+            strMailBox = String.Empty
+            Return Nothing
         End Try
         Return result
     End Function
@@ -351,7 +370,7 @@ Public Class Form1
             jetztan = watchdogOnDuty(tStamp, True)
             If vorheran And Not jetztan Then
                 'MsgBox("STOP-SMS müsste gesendet werden")
-                If modem.SendSMS(MA.number, String.Format("{0} {1:t}", {HBStop, tStamp})) Then
+                If modem.SendSMS(MA.number, String.Format("{0} {1:t}", HBStop, tStamp)) Then
                     AddLogText("Stop-SMS sent")
                 Else
                     AddLogText("! FAIL ! Stop-SMS should be sent but failed")
@@ -425,7 +444,7 @@ Public Class Form1
             If modem.enabled Then
                 .ForeColor = Color.Black
             Else
-                strPort = String.Format("{0} n/a !!", {strPort})
+                strPort = String.Format("{0} n/a !!", strPort)
                 .ForeColor = Color.Red
             End If
         End With
