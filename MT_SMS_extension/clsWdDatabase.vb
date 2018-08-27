@@ -118,7 +118,7 @@ Public Class clsWdDatabase
         End Try
         Return res
     End Function
-    Public Function currentBereitschaftsMA() As clsBerMA
+    Public Function getBereitschaftsMA() As clsBerMA
         Dim berMA As New clsBerMA
         Dim rs As MySqlDataReader
         Dim sQuery As String = String.Empty

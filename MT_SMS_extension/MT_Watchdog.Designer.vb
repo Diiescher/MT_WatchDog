@@ -1,9 +1,9 @@
-﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()> _
+﻿<Global.Microsoft.VisualBasic.CompilerServices.DesignerGenerated()>
 Partial Class MT_Watchdog
     Inherits System.Windows.Forms.Form
 
     'Form overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         Try
             If disposing AndAlso components IsNot Nothing Then
@@ -20,7 +20,7 @@ Partial Class MT_Watchdog
     'NOTE: The following procedure is required by the Windows Form Designer
     'It can be modified using the Windows Form Designer.  
     'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> _
+    <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
         Me.rtbOutput = New System.Windows.Forms.RichTextBox()
         Me.tbMobNr = New System.Windows.Forms.TextBox()
@@ -31,7 +31,6 @@ Partial Class MT_Watchdog
         Me.Label3 = New System.Windows.Forms.Label()
         Me.lblCurNr = New System.Windows.Forms.Label()
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
-        Me.lblWDisactive = New System.Windows.Forms.Label()
         Me.lblDateInfo = New System.Windows.Forms.Label()
         Me.cbOnlyOOH = New System.Windows.Forms.CheckBox()
         Me.cbSendHbSMS = New System.Windows.Forms.CheckBox()
@@ -54,36 +53,36 @@ Partial Class MT_Watchdog
         Me.Label9 = New System.Windows.Forms.Label()
         Me.tbComPortNr = New System.Windows.Forms.TextBox()
         Me.cbbOMailBox = New System.Windows.Forms.ComboBox()
-        Me.btClearLog = New System.Windows.Forms.Button()
         Me.cbAtCC = New System.Windows.Forms.CheckBox()
         Me.cbbCopyMailsTo = New System.Windows.Forms.ComboBox()
         Me.rbUseManual = New System.Windows.Forms.RadioButton()
         Me.rbUseDB = New System.Windows.Forms.RadioButton()
         Me.btPullData = New System.Windows.Forms.Button()
-        Me.btSetData = New System.Windows.Forms.Button()
+        Me.btSetManually = New System.Windows.Forms.Button()
         Me.Label12 = New System.Windows.Forms.Label()
+        Me.Label2 = New System.Windows.Forms.Label()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
         '
         'rtbOutput
         '
-        Me.rtbOutput.Location = New System.Drawing.Point(31, 479)
+        Me.rtbOutput.Location = New System.Drawing.Point(31, 466)
         Me.rtbOutput.Name = "rtbOutput"
-        Me.rtbOutput.Size = New System.Drawing.Size(365, 169)
+        Me.rtbOutput.Size = New System.Drawing.Size(462, 169)
         Me.rtbOutput.TabIndex = 0
         Me.rtbOutput.Text = ""
         '
         'tbMobNr
         '
-        Me.tbMobNr.Location = New System.Drawing.Point(169, 47)
+        Me.tbMobNr.Location = New System.Drawing.Point(121, 41)
         Me.tbMobNr.Name = "tbMobNr"
-        Me.tbMobNr.Size = New System.Drawing.Size(124, 20)
+        Me.tbMobNr.Size = New System.Drawing.Size(152, 20)
         Me.tbMobNr.TabIndex = 1
         '
         'rtbSmsText
         '
-        Me.rtbSmsText.Location = New System.Drawing.Point(31, 439)
+        Me.rtbSmsText.Location = New System.Drawing.Point(31, 426)
         Me.rtbSmsText.Name = "rtbSmsText"
         Me.rtbSmsText.Size = New System.Drawing.Size(365, 23)
         Me.rtbSmsText.TabIndex = 2
@@ -91,7 +90,7 @@ Partial Class MT_Watchdog
         '
         'btSend
         '
-        Me.btSend.Location = New System.Drawing.Point(405, 439)
+        Me.btSend.Location = New System.Drawing.Point(405, 426)
         Me.btSend.Name = "btSend"
         Me.btSend.Size = New System.Drawing.Size(88, 25)
         Me.btSend.TabIndex = 3
@@ -101,7 +100,7 @@ Partial Class MT_Watchdog
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(169, 31)
+        Me.Label1.Location = New System.Drawing.Point(38, 44)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(75, 13)
         Me.Label1.TabIndex = 4
@@ -110,7 +109,7 @@ Partial Class MT_Watchdog
         'lblLog
         '
         Me.lblLog.AutoSize = True
-        Me.lblLog.Location = New System.Drawing.Point(28, 465)
+        Me.lblLog.Location = New System.Drawing.Point(28, 452)
         Me.lblLog.Name = "lblLog"
         Me.lblLog.Size = New System.Drawing.Size(25, 13)
         Me.lblLog.TabIndex = 6
@@ -119,8 +118,8 @@ Partial Class MT_Watchdog
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.ForeColor = System.Drawing.SystemColors.HotTrack
-        Me.Label3.Location = New System.Drawing.Point(11, 64)
+        Me.Label3.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label3.Location = New System.Drawing.Point(12, 94)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(57, 13)
         Me.Label3.TabIndex = 8
@@ -129,7 +128,7 @@ Partial Class MT_Watchdog
         'lblCurNr
         '
         Me.lblCurNr.AutoSize = True
-        Me.lblCurNr.Location = New System.Drawing.Point(78, 64)
+        Me.lblCurNr.Location = New System.Drawing.Point(79, 94)
         Me.lblCurNr.Name = "lblCurNr"
         Me.lblCurNr.Size = New System.Drawing.Size(14, 13)
         Me.lblCurNr.TabIndex = 9
@@ -137,7 +136,6 @@ Partial Class MT_Watchdog
         '
         'GroupBox1
         '
-        Me.GroupBox1.Controls.Add(Me.lblWDisactive)
         Me.GroupBox1.Controls.Add(Me.lblDateInfo)
         Me.GroupBox1.Controls.Add(Me.cbOnlyOOH)
         Me.GroupBox1.Controls.Add(Me.cbSendHbSMS)
@@ -156,19 +154,10 @@ Partial Class MT_Watchdog
         Me.GroupBox1.Controls.Add(Me.Label3)
         Me.GroupBox1.Location = New System.Drawing.Point(31, 171)
         Me.GroupBox1.Name = "GroupBox1"
-        Me.GroupBox1.Size = New System.Drawing.Size(368, 253)
+        Me.GroupBox1.Size = New System.Drawing.Size(462, 240)
         Me.GroupBox1.TabIndex = 10
         Me.GroupBox1.TabStop = False
         Me.GroupBox1.Text = "actually using:"
-        '
-        'lblWDisactive
-        '
-        Me.lblWDisactive.AutoSize = True
-        Me.lblWDisactive.Location = New System.Drawing.Point(12, 39)
-        Me.lblWDisactive.Name = "lblWDisactive"
-        Me.lblWDisactive.Size = New System.Drawing.Size(59, 13)
-        Me.lblWDisactive.TabIndex = 27
-        Me.lblWDisactive.Text = "WD Status"
         '
         'lblDateInfo
         '
@@ -184,7 +173,7 @@ Partial Class MT_Watchdog
         Me.cbOnlyOOH.AutoSize = True
         Me.cbOnlyOOH.Checked = True
         Me.cbOnlyOOH.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.cbOnlyOOH.Location = New System.Drawing.Point(14, 155)
+        Me.cbOnlyOOH.Location = New System.Drawing.Point(15, 146)
         Me.cbOnlyOOH.Name = "cbOnlyOOH"
         Me.cbOnlyOOH.Size = New System.Drawing.Size(125, 17)
         Me.cbOnlyOOH.TabIndex = 25
@@ -194,7 +183,7 @@ Partial Class MT_Watchdog
         'cbSendHbSMS
         '
         Me.cbSendHbSMS.AutoSize = True
-        Me.cbSendHbSMS.Location = New System.Drawing.Point(15, 224)
+        Me.cbSendHbSMS.Location = New System.Drawing.Point(15, 209)
         Me.cbSendHbSMS.Name = "cbSendHbSMS"
         Me.cbSendHbSMS.Size = New System.Drawing.Size(125, 17)
         Me.cbSendHbSMS.TabIndex = 24
@@ -204,7 +193,7 @@ Partial Class MT_Watchdog
         'lblForward
         '
         Me.lblForward.AutoSize = True
-        Me.lblForward.Location = New System.Drawing.Point(73, 131)
+        Me.lblForward.Location = New System.Drawing.Point(79, 115)
         Me.lblForward.Name = "lblForward"
         Me.lblForward.Size = New System.Drawing.Size(45, 13)
         Me.lblForward.TabIndex = 20
@@ -213,7 +202,7 @@ Partial Class MT_Watchdog
         'cbSendMailSMS
         '
         Me.cbSendMailSMS.AutoSize = True
-        Me.cbSendMailSMS.Location = New System.Drawing.Point(15, 201)
+        Me.cbSendMailSMS.Location = New System.Drawing.Point(15, 188)
         Me.cbSendMailSMS.Name = "cbSendMailSMS"
         Me.cbSendMailSMS.Size = New System.Drawing.Size(134, 17)
         Me.cbSendMailSMS.TabIndex = 23
@@ -223,8 +212,8 @@ Partial Class MT_Watchdog
         'Label11
         '
         Me.Label11.AutoSize = True
-        Me.Label11.ForeColor = System.Drawing.SystemColors.HotTrack
-        Me.Label11.Location = New System.Drawing.Point(11, 131)
+        Me.Label11.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label11.Location = New System.Drawing.Point(12, 115)
         Me.Label11.Name = "Label11"
         Me.Label11.Size = New System.Drawing.Size(63, 13)
         Me.Label11.TabIndex = 19
@@ -233,7 +222,7 @@ Partial Class MT_Watchdog
         'lblComPortNr
         '
         Me.lblComPortNr.AutoSize = True
-        Me.lblComPortNr.Location = New System.Drawing.Point(271, 64)
+        Me.lblComPortNr.Location = New System.Drawing.Point(79, 52)
         Me.lblComPortNr.Name = "lblComPortNr"
         Me.lblComPortNr.Size = New System.Drawing.Size(35, 13)
         Me.lblComPortNr.TabIndex = 18
@@ -242,16 +231,17 @@ Partial Class MT_Watchdog
         'Label10
         '
         Me.Label10.AutoSize = True
-        Me.Label10.Location = New System.Drawing.Point(220, 64)
+        Me.Label10.ForeColor = System.Drawing.Color.Maroon
+        Me.Label10.Location = New System.Drawing.Point(12, 52)
         Me.Label10.Name = "Label10"
-        Me.Label10.Size = New System.Drawing.Size(45, 13)
+        Me.Label10.Size = New System.Drawing.Size(53, 13)
         Me.Label10.TabIndex = 17
-        Me.Label10.Text = "Modem:"
+        Me.Label10.Text = "Com-Port:"
         '
         'cbCopyTo
         '
         Me.cbCopyTo.AutoSize = True
-        Me.cbCopyTo.Location = New System.Drawing.Point(15, 178)
+        Me.cbCopyTo.Location = New System.Drawing.Point(15, 167)
         Me.cbCopyTo.Name = "cbCopyTo"
         Me.cbCopyTo.Size = New System.Drawing.Size(96, 17)
         Me.cbCopyTo.TabIndex = 20
@@ -261,7 +251,7 @@ Partial Class MT_Watchdog
         'lblMailBox
         '
         Me.lblMailBox.AutoSize = True
-        Me.lblMailBox.Location = New System.Drawing.Point(11, 107)
+        Me.lblMailBox.Location = New System.Drawing.Point(79, 73)
         Me.lblMailBox.Name = "lblMailBox"
         Me.lblMailBox.Size = New System.Drawing.Size(54, 13)
         Me.lblMailBox.TabIndex = 16
@@ -270,11 +260,12 @@ Partial Class MT_Watchdog
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(11, 90)
+        Me.Label6.ForeColor = System.Drawing.Color.Maroon
+        Me.Label6.Location = New System.Drawing.Point(12, 73)
         Me.Label6.Name = "Label6"
-        Me.Label6.Size = New System.Drawing.Size(93, 13)
+        Me.Label6.Size = New System.Drawing.Size(46, 13)
         Me.Label6.TabIndex = 15
-        Me.Label6.Text = "Watched Mailbox:"
+        Me.Label6.Text = "Mailbox:"
         '
         'GroupBox2
         '
@@ -282,7 +273,7 @@ Partial Class MT_Watchdog
         Me.GroupBox2.Controls.Add(Me.Label7)
         Me.GroupBox2.Controls.Add(Me.lblLastHb)
         Me.GroupBox2.Controls.Add(Me.Label5)
-        Me.GroupBox2.Location = New System.Drawing.Point(181, 155)
+        Me.GroupBox2.Location = New System.Drawing.Point(181, 144)
         Me.GroupBox2.Name = "GroupBox2"
         Me.GroupBox2.Size = New System.Drawing.Size(187, 65)
         Me.GroupBox2.TabIndex = 14
@@ -301,7 +292,7 @@ Partial Class MT_Watchdog
         'Label7
         '
         Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(7, 22)
+        Me.Label7.Location = New System.Drawing.Point(7, 21)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(66, 13)
         Me.Label7.TabIndex = 14
@@ -346,16 +337,18 @@ Partial Class MT_Watchdog
         'Label8
         '
         Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(28, 62)
+        Me.Label8.ForeColor = System.Drawing.Color.Maroon
+        Me.Label8.Location = New System.Drawing.Point(38, 71)
         Me.Label8.Name = "Label8"
-        Me.Label8.Size = New System.Drawing.Size(113, 13)
+        Me.Label8.Size = New System.Drawing.Size(43, 13)
         Me.Label8.TabIndex = 13
-        Me.Label8.Text = "Mailboxfolder to watch"
+        Me.Label8.Text = "Mailbox"
         '
         'Label9
         '
         Me.Label9.AutoSize = True
-        Me.Label9.Location = New System.Drawing.Point(331, 31)
+        Me.Label9.ForeColor = System.Drawing.Color.Maroon
+        Me.Label9.Location = New System.Drawing.Point(314, 44)
         Me.Label9.Name = "Label9"
         Me.Label9.Size = New System.Drawing.Size(53, 13)
         Me.Label9.TabIndex = 14
@@ -363,34 +356,25 @@ Partial Class MT_Watchdog
         '
         'tbComPortNr
         '
-        Me.tbComPortNr.Location = New System.Drawing.Point(334, 47)
+        Me.tbComPortNr.Location = New System.Drawing.Point(373, 41)
         Me.tbComPortNr.MaxLength = 2
         Me.tbComPortNr.Name = "tbComPortNr"
-        Me.tbComPortNr.Size = New System.Drawing.Size(48, 20)
+        Me.tbComPortNr.Size = New System.Drawing.Size(26, 20)
         Me.tbComPortNr.TabIndex = 15
         Me.tbComPortNr.Text = "4"
         '
         'cbbOMailBox
         '
         Me.cbbOMailBox.FormattingEnabled = True
-        Me.cbbOMailBox.Location = New System.Drawing.Point(31, 78)
+        Me.cbbOMailBox.Location = New System.Drawing.Point(121, 68)
         Me.cbbOMailBox.Name = "cbbOMailBox"
-        Me.cbbOMailBox.Size = New System.Drawing.Size(262, 21)
+        Me.cbbOMailBox.Size = New System.Drawing.Size(278, 21)
         Me.cbbOMailBox.TabIndex = 16
-        '
-        'btClearLog
-        '
-        Me.btClearLog.Location = New System.Drawing.Point(405, 619)
-        Me.btClearLog.Name = "btClearLog"
-        Me.btClearLog.Size = New System.Drawing.Size(88, 30)
-        Me.btClearLog.TabIndex = 17
-        Me.btClearLog.Text = "ClearLog"
-        Me.btClearLog.UseVisualStyleBackColor = True
         '
         'cbAtCC
         '
         Me.cbAtCC.AutoSize = True
-        Me.cbAtCC.Location = New System.Drawing.Point(305, 80)
+        Me.cbAtCC.Location = New System.Drawing.Point(405, 70)
         Me.cbAtCC.Name = "cbAtCC"
         Me.cbAtCC.Size = New System.Drawing.Size(88, 17)
         Me.cbAtCC.TabIndex = 18
@@ -400,15 +384,16 @@ Partial Class MT_Watchdog
         'cbbCopyMailsTo
         '
         Me.cbbCopyMailsTo.FormattingEnabled = True
-        Me.cbbCopyMailsTo.Location = New System.Drawing.Point(113, 105)
+        Me.cbbCopyMailsTo.Location = New System.Drawing.Point(121, 95)
         Me.cbbCopyMailsTo.Name = "cbbCopyMailsTo"
-        Me.cbbCopyMailsTo.Size = New System.Drawing.Size(269, 21)
+        Me.cbbCopyMailsTo.Size = New System.Drawing.Size(278, 21)
         Me.cbbCopyMailsTo.TabIndex = 21
         '
         'rbUseManual
         '
+        Me.rbUseManual.AutoCheck = False
         Me.rbUseManual.AutoSize = True
-        Me.rbUseManual.Location = New System.Drawing.Point(20, 17)
+        Me.rbUseManual.Location = New System.Drawing.Point(20, 14)
         Me.rbUseManual.Name = "rbUseManual"
         Me.rbUseManual.Size = New System.Drawing.Size(118, 17)
         Me.rbUseManual.TabIndex = 22
@@ -418,55 +403,67 @@ Partial Class MT_Watchdog
         '
         'rbUseDB
         '
+        Me.rbUseDB.AutoCheck = False
         Me.rbUseDB.AutoSize = True
-        Me.rbUseDB.Location = New System.Drawing.Point(20, 148)
+        Me.rbUseDB.Location = New System.Drawing.Point(20, 128)
         Me.rbUseDB.Name = "rbUseDB"
-        Me.rbUseDB.Size = New System.Drawing.Size(129, 17)
+        Me.rbUseDB.Size = New System.Drawing.Size(132, 17)
         Me.rbUseDB.TabIndex = 23
         Me.rbUseDB.TabStop = True
-        Me.rbUseDB.Text = "Use Database Setting"
+        Me.rbUseDB.Text = "Use Database Setting "
         Me.rbUseDB.UseVisualStyleBackColor = True
         '
         'btPullData
         '
-        Me.btPullData.ForeColor = System.Drawing.SystemColors.HotTrack
-        Me.btPullData.Location = New System.Drawing.Point(405, 185)
+        Me.btPullData.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.btPullData.Location = New System.Drawing.Point(405, 128)
         Me.btPullData.Name = "btPullData"
         Me.btPullData.Size = New System.Drawing.Size(88, 23)
         Me.btPullData.TabIndex = 24
         Me.btPullData.Text = "Pull Data"
         Me.btPullData.UseVisualStyleBackColor = True
         '
-        'btSetData
+        'btSetManually
         '
-        Me.btSetData.Location = New System.Drawing.Point(405, 25)
-        Me.btSetData.Name = "btSetData"
-        Me.btSetData.Size = New System.Drawing.Size(88, 25)
-        Me.btSetData.TabIndex = 25
-        Me.btSetData.Text = "Set Manual"
-        Me.btSetData.UseVisualStyleBackColor = True
+        Me.btSetManually.ForeColor = System.Drawing.Color.Maroon
+        Me.btSetManually.Location = New System.Drawing.Point(405, 10)
+        Me.btSetManually.Name = "btSetManually"
+        Me.btSetManually.Size = New System.Drawing.Size(88, 25)
+        Me.btSetManually.TabIndex = 25
+        Me.btSetManually.Text = "Set manually"
+        Me.btSetManually.UseVisualStyleBackColor = True
         '
         'Label12
         '
         Me.Label12.AutoSize = True
-        Me.Label12.Location = New System.Drawing.Point(30, 108)
+        Me.Label12.ForeColor = System.Drawing.SystemColors.ControlText
+        Me.Label12.Location = New System.Drawing.Point(38, 98)
         Me.Label12.Name = "Label12"
         Me.Label12.Size = New System.Drawing.Size(74, 13)
         Me.Label12.TabIndex = 26
         Me.Label12.Text = "copy-to E-Mail"
         '
-        'Form1
+        'Label2
+        '
+        Me.Label2.AutoSize = True
+        Me.Label2.Location = New System.Drawing.Point(37, 147)
+        Me.Label2.Name = "Label2"
+        Me.Label2.Size = New System.Drawing.Size(135, 13)
+        Me.Label2.TabIndex = 27
+        Me.Label2.Text = "( for  email + mobile ONLY!)"
+        '
+        'MT_Watchdog
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(522, 660)
+        Me.ClientSize = New System.Drawing.Size(522, 645)
+        Me.Controls.Add(Me.Label2)
         Me.Controls.Add(Me.Label12)
-        Me.Controls.Add(Me.btSetData)
+        Me.Controls.Add(Me.btSetManually)
         Me.Controls.Add(Me.btPullData)
         Me.Controls.Add(Me.rbUseDB)
         Me.Controls.Add(Me.rbUseManual)
         Me.Controls.Add(Me.cbAtCC)
-        Me.Controls.Add(Me.btClearLog)
         Me.Controls.Add(Me.cbbOMailBox)
         Me.Controls.Add(Me.cbbCopyMailsTo)
         Me.Controls.Add(Me.tbComPortNr)
@@ -479,7 +476,7 @@ Partial Class MT_Watchdog
         Me.Controls.Add(Me.btSend)
         Me.Controls.Add(Me.tbMobNr)
         Me.Controls.Add(Me.rtbOutput)
-        Me.Name = "Form1"
+        Me.Name = "MT_Watchdog"
         Me.Text = "MB_Watchdog killsw"
         Me.GroupBox1.ResumeLayout(False)
         Me.GroupBox1.PerformLayout()
@@ -514,7 +511,6 @@ Partial Class MT_Watchdog
     Friend WithEvents Label9 As Label
     Friend WithEvents tbComPortNr As TextBox
     Friend WithEvents cbbOMailBox As ComboBox
-    Friend WithEvents btClearLog As Button
     Friend WithEvents cbAtCC As CheckBox
     Friend WithEvents cbCopyTo As CheckBox
     Friend WithEvents cbbCopyMailsTo As ComboBox
@@ -524,10 +520,10 @@ Partial Class MT_Watchdog
     Friend WithEvents cbSendHbSMS As CheckBox
     Friend WithEvents cbOnlyOOH As CheckBox
     Friend WithEvents lblDateInfo As Label
-    Friend WithEvents lblWDisactive As Label
     Friend WithEvents rbUseManual As RadioButton
     Friend WithEvents rbUseDB As RadioButton
     Friend WithEvents btPullData As Button
-    Friend WithEvents btSetData As Button
+    Friend WithEvents btSetManually As Button
     Friend WithEvents Label12 As Label
+    Friend WithEvents Label2 As Label
 End Class
