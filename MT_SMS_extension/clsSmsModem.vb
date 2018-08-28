@@ -1,7 +1,7 @@
 ﻿Imports System.IO.Ports
 Public Class clsSmsModem
 
-    'eine "Arbeiterklasse", die ein Modem darstellt
+    'eine "Arbeiterklasse", die ein SMS-Modem darstellt
 
 
     Private WithEvents sp As SerialPort
@@ -19,12 +19,12 @@ Public Class clsSmsModem
             Return MessageText
         End Get
     End Property
-    ReadOnly Property enabled As Boolean
+    ReadOnly Property Enabled As Boolean
         Get
             Return working
         End Get
     End Property
-    Public Sub New(comPort As String)
+    Public Sub New(Optional comPort As String = "Com0")
         'erwartet den String "COMX" mit X als Portnummer als Parameter
         Dim result As Boolean
         Port = comPort
@@ -44,8 +44,9 @@ Public Class clsSmsModem
         End Try
         working = result
     End Sub
-    Public Overloads Function sendSMS()
-        SendSMS(telNr, SmsText)
+    Public Overloads Function SendSMS() As Boolean
+        'sends SMS with stored number and text
+        Return SendSMS(telNr, SmsText)
     End Function
 
     Public Overloads Function SendSMS(ByVal [To] As String, ByVal Message As String) As Boolean
@@ -58,7 +59,7 @@ Public Class clsSmsModem
             result = result And ComSendData(Chr(26), "OK")
             sp.Close()
         Catch EX As System.Exception
-            MessageText = "Send SMS Failed with Exception" & vbCrLf & EX.Message
+            MessageText = String.Format("Send SMS Failed with Exception!{0}{1}>>{2}", vbCrLf, vbTab, EX.Message)
             result = False
         End Try
         Return result

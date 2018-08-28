@@ -61,6 +61,7 @@ Partial Class MT_Watchdog
         Me.btSetManually = New System.Windows.Forms.Button()
         Me.Label12 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
@@ -269,13 +270,14 @@ Partial Class MT_Watchdog
         '
         'GroupBox2
         '
+        Me.GroupBox2.Controls.Add(Me.Button1)
         Me.GroupBox2.Controls.Add(Me.lblInterval)
         Me.GroupBox2.Controls.Add(Me.Label7)
         Me.GroupBox2.Controls.Add(Me.lblLastHb)
         Me.GroupBox2.Controls.Add(Me.Label5)
         Me.GroupBox2.Location = New System.Drawing.Point(181, 144)
         Me.GroupBox2.Name = "GroupBox2"
-        Me.GroupBox2.Size = New System.Drawing.Size(187, 65)
+        Me.GroupBox2.Size = New System.Drawing.Size(254, 65)
         Me.GroupBox2.TabIndex = 14
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "HeartBeat"
@@ -452,6 +454,15 @@ Partial Class MT_Watchdog
         Me.Label2.TabIndex = 27
         Me.Label2.Text = "( for  email + mobile ONLY!)"
         '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(161, 12)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(82, 23)
+        Me.Button1.TabIndex = 28
+        Me.Button1.Text = "Send HB"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
         'MT_Watchdog
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -526,4 +537,5 @@ Partial Class MT_Watchdog
     Friend WithEvents btSetManually As Button
     Friend WithEvents Label12 As Label
     Friend WithEvents Label2 As Label
+    Friend WithEvents Button1 As Button
 End Class
