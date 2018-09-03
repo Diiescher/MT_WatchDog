@@ -43,6 +43,7 @@ Partial Class MT_Watchdog
         Me.lblMailBox = New System.Windows.Forms.Label()
         Me.Label6 = New System.Windows.Forms.Label()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
+        Me.Button1 = New System.Windows.Forms.Button()
         Me.lblInterval = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.lblLastHb = New System.Windows.Forms.Label()
@@ -61,7 +62,7 @@ Partial Class MT_Watchdog
         Me.btSetManually = New System.Windows.Forms.Button()
         Me.Label12 = New System.Windows.Forms.Label()
         Me.Label2 = New System.Windows.Forms.Label()
-        Me.Button1 = New System.Windows.Forms.Button()
+        Me.lblRAM = New System.Windows.Forms.Label()
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         Me.SuspendLayout()
@@ -137,6 +138,7 @@ Partial Class MT_Watchdog
         '
         'GroupBox1
         '
+        Me.GroupBox1.Controls.Add(Me.lblRAM)
         Me.GroupBox1.Controls.Add(Me.lblDateInfo)
         Me.GroupBox1.Controls.Add(Me.cbOnlyOOH)
         Me.GroupBox1.Controls.Add(Me.cbSendHbSMS)
@@ -196,9 +198,9 @@ Partial Class MT_Watchdog
         Me.lblForward.AutoSize = True
         Me.lblForward.Location = New System.Drawing.Point(79, 115)
         Me.lblForward.Name = "lblForward"
-        Me.lblForward.Size = New System.Drawing.Size(45, 13)
+        Me.lblForward.Size = New System.Drawing.Size(31, 13)
         Me.lblForward.TabIndex = 20
-        Me.lblForward.Text = "Label12"
+        Me.lblForward.Text = "email"
         '
         'cbSendMailSMS
         '
@@ -281,6 +283,15 @@ Partial Class MT_Watchdog
         Me.GroupBox2.TabIndex = 14
         Me.GroupBox2.TabStop = False
         Me.GroupBox2.Text = "HeartBeat"
+        '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(161, 12)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(82, 23)
+        Me.Button1.TabIndex = 28
+        Me.Button1.Text = "Send HB"
+        Me.Button1.UseVisualStyleBackColor = True
         '
         'lblInterval
         '
@@ -454,14 +465,14 @@ Partial Class MT_Watchdog
         Me.Label2.TabIndex = 27
         Me.Label2.Text = "( for  email + mobile ONLY!)"
         '
-        'Button1
+        'lblRAM
         '
-        Me.Button1.Location = New System.Drawing.Point(161, 12)
-        Me.Button1.Name = "Button1"
-        Me.Button1.Size = New System.Drawing.Size(82, 23)
-        Me.Button1.TabIndex = 28
-        Me.Button1.Text = "Send HB"
-        Me.Button1.UseVisualStyleBackColor = True
+        Me.lblRAM.AutoSize = True
+        Me.lblRAM.Location = New System.Drawing.Point(311, 209)
+        Me.lblRAM.Name = "lblRAM"
+        Me.lblRAM.Size = New System.Drawing.Size(61, 13)
+        Me.lblRAM.TabIndex = 27
+        Me.lblRAM.Text = "RAM count"
         '
         'MT_Watchdog
         '
@@ -538,4 +549,5 @@ Partial Class MT_Watchdog
     Friend WithEvents Label12 As Label
     Friend WithEvents Label2 As Label
     Friend WithEvents Button1 As Button
+    Friend WithEvents lblRAM As Label
 End Class
